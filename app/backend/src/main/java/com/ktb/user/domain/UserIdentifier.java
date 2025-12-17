@@ -1,11 +1,12 @@
 package com.ktb.user.domain;
 
 import jakarta.persistence.*;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Getter
 @Entity
-@NoArgsConstructor
-
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserIdentifier {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE,
@@ -15,8 +16,15 @@ public class UserIdentifier {
             allocationSize = 100)
     private Long id;
 
-    private String username; // null이 아니면 총무
+    private String username;
+
     private String nickname;
+
     private String password;
 
+    public UserIdentifier(String username, String nickname, String encryptedPassword) {
+        this.username = username;
+        this.nickname = nickname;
+        this.password = encryptedPassword;
+    }
 }
