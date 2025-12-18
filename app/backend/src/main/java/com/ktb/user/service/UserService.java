@@ -20,7 +20,7 @@ public class UserService {
     @Transactional
     public void create(UserDto userDto) {
         // 아이디(username) 중복성 검사
-        Optional<UserIdentifier> existingUser = userRepository.findByUsername(userDto.getUsername());
+        Optional<UserIdentifier> existingUser = userRepository.findByUsername(userDto.getId());
         if (existingUser.isPresent()) {
             throw new RuntimeException();
         }
@@ -28,7 +28,7 @@ public class UserService {
         // 비밀번호 암호화
         String encryptedPassword = passwordEncoder.encode(userDto.getPassword());
 
-        UserIdentifier userIdentifier = new UserIdentifier(userDto.getUsername(), userDto.getNickname(), encryptedPassword);
+        UserIdentifier userIdentifier = new UserIdentifier(userDto.getId(), userDto.getNickname(), encryptedPassword);
         userRepository.save(userIdentifier);
     }
 
