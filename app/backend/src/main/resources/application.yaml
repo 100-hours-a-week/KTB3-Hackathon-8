@@ -58,13 +58,13 @@ security:
     # 인증 API
     - /api/v1/auth/login
     - /api/v1/users/signup
-    - /api/v1/users/exist/**
+    - /api/v1/users/exist/*
     # 그룹 API (invite-url 제외)
-    - /api/v1/group/**/aggregation
-    - /api/v1/group/**/submissions
+    - /api/v1/group/*/aggregation
+    - /api/v1/group/*/submissions
     # 제출 API
     - /api/v1/submission/user
-    - /api/v1/submission/total/**
+    - /api/v1/submission/total/*
 
 # 환경별 설정
 ---
@@ -138,13 +138,13 @@ security:
     - /pages/user/signup.html
     - /api/v1/auth/login
     - /api/v1/users/signup
-    - /api/v1/users/exist/**
+    - /api/v1/users/exist/*
     # 그룹 API (invite-url 제외)
-    - /api/v1/group/**/aggregation
-    - /api/v1/group/**/submissions
+    - /api/v1/group/*/aggregation
+    - /api/v1/group/*/submissions
     # 제출 API
     - /api/v1/submission/user
-    - /api/v1/submission/total/**
+    - /api/v1/submission/total/*
 
 ---
 spring:
@@ -184,7 +184,7 @@ security:
     - /fonts/**
     - /favicon.ico
     - /actuator/health
-    - /api/v1/group/**/invite-url
+    - /api/v1/group/*/invite-url
     - /api/v1/submission/user
 
   anonymous-only-endpoints:
@@ -192,4 +192,4 @@ security:
     - /user/signup
     - /api/v1/auth/login
     - /api/v1/users/signup
-    - /api/v1/users/exist/**
+    - /api/v1/users/exist/*
