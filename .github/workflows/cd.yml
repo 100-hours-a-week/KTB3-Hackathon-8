@@ -53,6 +53,11 @@ jobs:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       IMAGE_TAG: ${{ needs.build-and-push-image.outputs.image_tag }}
 
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      IMAGE_OCR_SERVER_URL: ${{ secrets.IMAGE_OCR_SERVER_URL }}
+      PRIVATE_KEY_PATH: ${{ secrets.PRIVATE_KEY_PATH }} 
+      PUBLIC_KEY_PATH: ${{ secrets.PUBLIC_KEY_PATH }}
+
     steps:
       - name: Prepare SSH Key
         run: |
@@ -63,10 +68,30 @@ jobs:
         
       - name: Deploy to EC2 via Docker Compose
         run: | 
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "DOCKER_USERNAME='${DOCKER_USERNAME}' IMAGE_TAG='${IMAGE_TAG}' sudo -E bash -s" << 'EOF'
-            echo "DOCKER_USERNAME=$DOCKER_USERNAME"
-            echo "IMAGE_TAG=$IMAGE_TAG"
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "DOCKER_USERNAME='${DOCKER_USERNAME}' IMAGE_TAG='${IMAGE_TAG}' \
+            GOOGLE_API_KEY='${GOOGLE_API_KEY}' IMAGE_OCR_SERVER_URL='${IMAGE_OCR_SERVER_URL}' \
+            PRIVATE_KEY_PATH='${PRIVATE_KEY_PATH}' PUBLIC_KEY_PATH='${PUBLIC_KEY_PATH}' \
+            sudo -E bash -s" << EOF
+            echo "DOCKER_USERNAME=\$DOCKER_USERNAME"
+            echo "IMAGE_TAG=\$IMAGE_TAG"
             cd /home/${{ secrets.SERVER_USER }}
+
+            cat > .env <<ENVEOF
+            # Google Map API Key
+            GOOGLE_API_KEY="\$GOOGLE_API_KEY"
+
+            # OCR Server URL
+            IMAGE_OCR_SERVER_URL="\$IMAGE_OCR_SERVER_URL"
+
+            # JWT Token Path
+            PRIVATE_KEY_PATH="\$PRIVATE_KEY_PATH"
+            PUBLIC_KEY_PATH="\$PUBLIC_KEY_PATH"
+            ENVEOF
+
+            set -a
+            . ./.env
+            set +a
+
             docker compose pull
             docker compose up -d
             docker compose ps
