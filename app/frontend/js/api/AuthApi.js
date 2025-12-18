@@ -9,4 +9,10 @@ export async function signUp(id, nickname, password) {
     return await fetchAPIWithBody(`${API_BASE}/users`,'POST', JSON.stringify({ id, nickname, password }) );
 }
 
+/**
+ * POST 로그인
 
+ */
+export async function signIn(username, password) {
+    return await fetchAPIWithBody(`/auth/login`,'POST', JSON.stringify({ username, password }) );
+}
