@@ -43,6 +43,8 @@ public class GroupService {
         return String.format("%s/group/%d/%d", baseUrl, groupId, ownerId);
     }
 
+    @Transactional(readOnly = true)
+    @Lock(value = LockModeType.PESSIMISTIC_READ)
     public GroupFinalMeta getGroupCompletionMeta(Long groupId, Long ownerId) {
         Group group =
                 groupRepository.findByIdAndGroupOwner_Id(groupId, ownerId)
