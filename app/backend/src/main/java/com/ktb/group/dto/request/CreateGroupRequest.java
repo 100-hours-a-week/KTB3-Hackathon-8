@@ -7,9 +7,6 @@ import java.util.Date;
 
 @Schema(description = "그룹 생성 요청")
 public record CreateGroupRequest(
-        @Schema(description = "그룹 오너 ID", example = "1", requiredMode = RequiredMode.REQUIRED)
-        Long ownerId,
-
         @Schema(description = "최대 인원", example = "4", requiredMode = RequiredMode.REQUIRED)
         @JsonProperty("max_capacity")
         Integer maxCapacity,

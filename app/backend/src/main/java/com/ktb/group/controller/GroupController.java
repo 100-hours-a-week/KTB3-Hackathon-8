@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Group", description = "그룹 관리 API")
@@ -41,9 +40,10 @@ public class GroupController {
     })
     @PostMapping()
     public ResponseEntity<CreateGroupIdResponse> createGroup(
-            @RequestBody CreateGroupRequest groupRequest
+            @RequestBody CreateGroupRequest groupRequest,
+            @AuthenticationPrincipal SecurityUserAccount principal
     ) {
-        Long createdId = groupService.createGroup(groupRequest);
+        Long createdId = groupService.createGroup(groupRequest, principal.getAccount().getId());
 
         CreateGroupIdResponse response = new CreateGroupIdResponse(createdId);
 

@@ -60,8 +60,8 @@ public class GroupService {
         return GroupFinalMeta.from(group);
     }
 
-    public Long createGroup(CreateGroupRequest groupRequest) {
-        UserIdentifier user = userRepository.findById(groupRequest.ownerId()).orElseThrow();
+    public Long createGroup(CreateGroupRequest groupRequest, Long ownerId) {
+        UserIdentifier user = userRepository.findById(ownerId).orElseThrow();
         //Long ownerId, Integer maxCapacity, String station, Integer budget
         Group group = Group.create(
                 user,
