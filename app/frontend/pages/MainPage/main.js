@@ -200,12 +200,11 @@ async function handleFormSubmit(e) {
     
     const formData = {
         max_capacity: memberCount,
-        budget: budgetWon.toString(),
+        has_scheduled_Date: formInputData.dateToggleChecked,
+        start_date: formInputData.dateToggleChecked ? formatDateTime(formInputData.dateStart) : null,
+        end_date: formInputData.dateToggleChecked ? formatDateTime(formInputData.dateEnd) : null,
         station: station.replace('역', ''),
-        date_range: formInputData.dateToggleChecked ? [
-            formatDateTime(formInputData.dateStart),
-            formatDateTime(formInputData.dateEnd)
-        ] : null
+        budget: budgetWon.toString()
     };
 
     try {
