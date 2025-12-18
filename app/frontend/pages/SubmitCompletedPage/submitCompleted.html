@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부장님 여기요</title>
+    <link rel="stylesheet" href="../../css/style.css">
+</head>
+<body>
+    <!-- 헤더 (공통 컴포넌트) -->
+    <div id="header-container"></div>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main-content flex-container justify-center align-center">
+        <div class="content-wrapper flex-container column justify-center align-center">
+            <h3 class="page-title congrats-text">제출 완료!</h3>
+            <img class="completed-image" src="../../assets/congrats.png" alt="제출 완료 이미지">
+            <h4 class="page-body">응답이 정상적으로 전달되었습니다.</h4>
+    </main>
+
+    <!-- Toast 메시지 컨테이너 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script type="module" src="submitCompleted.js"></script>
+</body>
+</html>
+

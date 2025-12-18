@@ -1,0 +1,10 @@
+.congrats-text {
+    position: absolute;
+}
+.completed-image {
+    width: 80px;
+    height: auto;
+    position: relative;
+    margin-left: 150px;
+    margin-top: -15px;
+}
