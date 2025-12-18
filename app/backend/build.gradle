@@ -44,6 +44,9 @@ dependencies {
     // ✅ Configuration
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
+    // ✅ Google Maps API
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
     // ✅ AOP (Aspect-Oriented Programming)
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
