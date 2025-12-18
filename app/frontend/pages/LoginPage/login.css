@@ -25,7 +25,7 @@
 }
 
 .auth-button {
-    background-color: #D53521;
+    background-color: var(--red-active);
     color: white;
     border: none;
     padding: 8px 32px;
@@ -39,7 +39,7 @@
 }
 
 .auth-button:disabled {
-    background-color: gray;
+    background-color: var(--red-disabled);
 }
 
 .signup-link {

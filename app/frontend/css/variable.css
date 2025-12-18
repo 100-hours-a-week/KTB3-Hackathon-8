@@ -1,6 +1,9 @@
 :root {
   --bg-white: #F4F5F7;
   --bg-white2: #f5f5f5;
+  --red-active: #d53521;
+  --red-disabled: #e88a7f;
+  --red-dark: #b82a18;
   /* --l-gray: #e6ebef;
   --m-gray: #D9D9D9;
   --d-gray: #424b55;
