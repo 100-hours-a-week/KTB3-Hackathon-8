@@ -1,9 +1,32 @@
 import { showToast } from '../../js/common/messages.js';
 import { loadHeader } from '../../layout/header/header.js';
 import { validateGroupForm, validateGroupFormSubmit, extractGroupFormData, loadStations, getStations } from '../../js/common/validators.js';
-import { createGroup, getGroupSettings, getGroupSubmitStatus } from '../../js/api/GroupApi.js';
 import { submitAggregation } from '../../js/api/SubmissionAPI.js';
 import { getGroupIdFromSession } from '../../js/common/sessionManagers.js';
+
+// 초기화
+window.addEventListener('DOMContentLoaded', async () => {
+    const headerContainer = document.getElementById('header-container');
+    console.log(headerContainer);
+    await loadHeader(headerContainer);
+    
+    // 역 목록 로드
+    await loadStations();
+    
+    initDOM();
+    setupEventListeners();
+    
+    // 로그인 상태 확인
+    const isLoggedIn = checkLoginStatus();
+    
+    if (!isLoggedIn) {
+        // 로그인하지 않은 경우 로그인 필요 toast 메시지 표시 및 리다이렉트
+        showLoginRequiredToast();
+    } else {
+        // 로그인한 경우 그룹 생성 모달 표시
+        modal.open();
+    }
+});
 
 // 날짜 형식 변환 함수
 function formatDateTime(dateTimeString) {
@@ -322,7 +345,19 @@ function handleViewResultClick() {
 }
 
 // 제출 현황 업데이트
-async function updateSubmissionStatus(submitted, total, members = []) {
+async function updateSubmissionStatus() {
+
+    const submissionStatusResponse = await getGroupSubmitStatus(groupId, ownerId);
+    let submitted;
+    let total;
+    let submissionList;
+    if (submissionStatusResponse.ok) {
+        const statusData = await submissionStatusResponse.json();
+        submitted = statusData.submit_count || 0;
+        total = statusData.total_user_count || 0;
+        submissionList = statusData.user_nickname_list || [];
+    }
+
     submissionData.submitted = submitted;
     submissionData.total = total;
     submissionData.members = members;
@@ -400,6 +435,17 @@ function startStatusPolling() {
         
         // TempAggregation을 사용하여 제출 현황 업데이트
         await updateSubmissionStatusFromAggregation();
+        try {
+            // const response = await getGroupStatus(groupData.id);
+
+            // if (response.ok) {
+            //     const data = await response.json();
+                
+            // }
+            updateSubmissionStatus();
+        } catch (error) {
+            console.error('Error fetching status:', error);
+        }
     }, 5000);
 }
 
@@ -533,26 +579,3 @@ function showLoginRequiredToast() {
         window.location.href = '../../pages/LoginPage/login.html';
     }, 2000);
 }
-
-// 초기화
-window.addEventListener('DOMContentLoaded', async () => {
-    const headerContainer = document.getElementById('header-container');
-    await loadHeader(headerContainer);
-    
-    // 역 목록 로드
-    await loadStations();
-    
-    initDOM();
-    setupEventListeners();
-    
-    // 로그인 상태 확인
-    const isLoggedIn = checkLoginStatus();
-    
-    if (!isLoggedIn) {
-        // 로그인하지 않은 경우 로그인 필요 toast 메시지 표시 및 리다이렉트
-        showLoginRequiredToast();
-    } else {
-        // 로그인한 경우 그룹 생성 모달 표시
-        modal.open();
-    }
-});
