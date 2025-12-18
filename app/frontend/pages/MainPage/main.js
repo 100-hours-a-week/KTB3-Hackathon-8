@@ -1,7 +1,8 @@
 import { showToast } from '../../js/common/messages.js';
 import { loadHeader } from '../../layout/header/header.js';
 import { validateGroupForm, validateGroupFormSubmit, extractGroupFormData, loadStations, getStations } from '../../js/common/validators.js';
-import { submitAggregation } from '../../js/api/SubmissionAPI.js';
+import { createGroup, getGroupSettings, getGroupSubmitStatus } from '../../js/api/GroupApi.js';
+import { submitAggregation } from '../../js/api/SubmissionApi.js';
 import { getGroupIdFromSession } from '../../js/common/sessionManagers.js';
 
 // 초기화
@@ -9,16 +10,16 @@ window.addEventListener('DOMContentLoaded', async () => {
     const headerContainer = document.getElementById('header-container');
     console.log(headerContainer);
     await loadHeader(headerContainer);
-    
+
     // 역 목록 로드
     await loadStations();
-    
+
     initDOM();
     setupEventListeners();
-    
+
     // 로그인 상태 확인
     const isLoggedIn = checkLoginStatus();
-    
+
     if (!isLoggedIn) {
         // 로그인하지 않은 경우 로그인 필요 toast 메시지 표시 및 리다이렉트
         showLoginRequiredToast();
@@ -440,7 +441,7 @@ function startStatusPolling() {
 
             // if (response.ok) {
             //     const data = await response.json();
-                
+
             // }
             updateSubmissionStatus();
         } catch (error) {
@@ -543,39 +544,19 @@ function setupEventListeners() {
     
 }
 
-// 로그인 상태 확인 함수
-function checkLoginStatus() {
-    // 쿠키에서 JWT 토큰 확인
-    // 일반적인 JWT 토큰 쿠키 이름들을 확인
-    const cookieNames = ['accessToken', 'jwt', 'token', 'authToken'];
-    
-    for (const name of cookieNames) {
-        const cookies = document.cookie.split(';');
-        for (let cookie of cookies) {
-            cookie = cookie.trim();
-            if (cookie.startsWith(name + '=')) {
-                const token = cookie.substring(name.length + 1);
-                if (token && token !== '') {
-                    return true;
-                }
-            }
-        }
-    }
-    
-    // localStorage에서도 확인 (대체 방법)
-    const token = localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('jwt');
-    if (token && token !== '') {
-        return true;
-    }
-    
-    return false;
+// 로그인 필요 toast 메시지 표시
+function showLoginRequiredToast() {
+    showToast('로그인이 필요한 서비스입니다.');
 }
 
-// 로그인 필요 toast 메시지 표시 및 리다이렉트
-function showLoginRequiredToast() {
-    showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
-    // 2초 후 로그인 페이지로 리다이렉트
-    setTimeout(() => {
-        window.location.href = '../../pages/LoginPage/login.html';
-    }, 2000);
-}
+// 초기화
+window.addEventListener('DOMContentLoaded', async () => {
+    const headerContainer = document.getElementById('header-container');
+    await loadHeader(headerContainer);
+    
+    // 역 목록 로드
+    await loadStations();
+    
+    initDOM();
+    setupEventListeners();
+});
