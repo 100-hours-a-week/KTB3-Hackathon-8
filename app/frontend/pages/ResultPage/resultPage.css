@@ -1,0 +1,516 @@
+.main-content {
+    padding: 20px 16px;
+    min-height: calc(100vh - 80px);
+}
+
+.content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* 로딩 상태 */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 80px); /* 화면 전체 높이에서 헤더 높이 제외 */
+    gap: 32px;
+    position: relative;
+}
+
+.loading-spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.spinner-dot {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: #ddd;
+    border-radius: 50%;
+    animation: spinner-rotate 1.2s linear infinite;
+}
+
+.spinner-dot:nth-child(1) {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 0s;
+}
+
+.spinner-dot:nth-child(2) {
+    top: 10px;
+    right: 10px;
+    animation-delay: 0.15s;
+}
+
+.spinner-dot:nth-child(3) {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    animation-delay: 0.3s;
+}
+
+.spinner-dot:nth-child(4) {
+    bottom: 10px;
+    right: 10px;
+    animation-delay: 0.45s;
+}
+
+.spinner-dot:nth-child(5) {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 0.6s;
+}
+
+.spinner-dot:nth-child(6) {
+    bottom: 10px;
+    left: 10px;
+    animation-delay: 0.75s;
+}
+
+.spinner-dot:nth-child(7) {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    animation-delay: 0.9s;
+}
+
+.spinner-dot:nth-child(8) {
+    top: 10px;
+    left: 10px;
+    animation-delay: 1.05s;
+}
+
+@keyframes spinner-rotate {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.loading-message {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+    margin: 0;
+}
+
+/* 결과 상태 */
+.result-container {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 40px;
+    gap: 0; /* gap은 사용하지 않고 개별 margin 사용 */
+}
+
+/* 결과 헤더 메시지 */
+.result-header {
+    text-align: center;
+    margin-bottom: 32px; /* 공백 감소 */
+    padding: 16px 0; /* 공백 감소 */
+}
+
+.result-message {
+    font-size: 22px;
+    font-weight: 700;
+    color: #212529;
+    margin: 0;
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    display: inline-block;
+}
+
+
+
+.result-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 공백 감소 */
+}
+
+/* 날짜 섹션과 장소 섹션 사이 공간 */
+.date-section {
+    margin-bottom: 0 !important;
+    margin-top: 50px !important;
+    padding-bottom: 25px !important; /* 하단 패딩으로 공백 생성 */
+}
+
+/* 장소 섹션 상단에 여백 추가 */
+.place-section {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 25px !important; /* 상단 패딩으로 공백 생성 */
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #212529;
+    margin: 0 0 16px 0; /* 공백 감소 */
+    text-align: center; /* 가운데 정렬 */
+    width: 100%; /* 전체 너비 사용 */
+    letter-spacing: -0.5px;
+    position: relative;
+    padding-bottom: 10px; /* 공백 감소 */
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+/* 랭킹 단상 스타일 - 가로 배치 */
+.ranking-podium {
+    display: flex;
+    flex-direction: row;
+    gap: 12px; /* 공백 감소 */
+    align-items: flex-end; /* 하단 정렬로 단상 효과 */
+    width: 100%;
+    padding: 4px 0; /* 공백 감소 */
+}
+
+.ranking-item {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 2px solid #e9ecef;
+    border-radius: 20px;
+    padding: 24px 20px;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 1; /* 가로 배치 시 균등하게 공간 분배 */
+    min-width: 0; /* flex item이 부모보다 작아질 수 있도록 */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box; /* padding 포함한 너비 계산 */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.ranking-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.ranking-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.06), transparent);
+}
+
+.ranking-item:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-color: #ced4da;
+}
+
+/* 날짜 랭킹 아이템 스타일 */
+#dateRankingList .ranking-item.rank-1 {
+    background: linear-gradient(135deg, #fff9e6 0%, #ffeaa7 50%, #fff9e6 100%);
+    border-color: #ffd700;
+    border-width: 3px;
+    box-shadow: 0 6px 24px rgba(255, 215, 0, 0.3), 0 0 0 2px rgba(255, 215, 0, 0.15) inset, 0 2px 8px rgba(255, 215, 0, 0.2);
+    height: 130px; /* 가장 높은 박스 */
+    order: 2; /* 2순위와 3순위 사이에 위치 */
+}
+
+#dateRankingList .ranking-item.rank-1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700, #ffed4e, #ffd700);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 3px 12px rgba(255, 215, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    z-index: 1;
+}
+
+#dateRankingList .ranking-item.rank-2 {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%);
+    border-color: #ced4da;
+    border-width: 2px;
+    height: 110px; /* 중간 높이 */
+    order: 1; /* 왼쪽에 위치 */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+#dateRankingList .ranking-item.rank-3 {
+    background: linear-gradient(135deg, #fff4e6 0%, #ffe0b2 50%, #fff4e6 100%);
+    border-color: #ffa500;
+    border-width: 2px;
+    height: 100px; /* 가장 낮은 박스 */
+    order: 3; /* 오른쪽에 위치 */
+    box-shadow: 0 4px 16px rgba(255, 165, 0, 0.2), 0 1px 4px rgba(255, 165, 0, 0.1);
+}
+
+/* 장소 랭킹 아이템 스타일 */
+#placeRankingList .ranking-item.rank-1 {
+    background: linear-gradient(135deg, #fff9e6 0%, #ffeaa7 50%, #fff9e6 100%);
+    border-color: #ffd700;
+    border-width: 3px;
+    box-shadow: 0 6px 24px rgba(255, 215, 0, 0.3), 0 0 0 2px rgba(255, 215, 0, 0.15) inset, 0 2px 8px rgba(255, 215, 0, 0.2);
+    height: 180px; /* 가장 높은 박스 */
+    order: 2; /* 2순위와 3순위 사이에 위치 */
+}
+
+#placeRankingList .ranking-item.rank-1::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #ffd700, #ffed4e, #ffd700, #ffed4e, #ffd700);
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 3px 12px rgba(255, 215, 0, 0.5), inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    z-index: 1;
+}
+
+#placeRankingList .ranking-item.rank-2 {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #f8f9fa 100%);
+    border-color: #ced4da;
+    border-width: 2px;
+    height: 160px; /* 중간 높이 */
+    order: 1; /* 왼쪽에 위치 */
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+#placeRankingList .ranking-item.rank-3 {
+    background: linear-gradient(135deg, #fff4e6 0%, #ffe0b2 50%, #fff4e6 100%);
+    border-color: #ffa500;
+    border-width: 2px;
+    height: 150px; /* 가장 낮은 박스 */
+    order: 3; /* 오른쪽에 위치 */
+    box-shadow: 0 4px 16px rgba(255, 165, 0, 0.2), 0 1px 4px rgba(255, 165, 0, 0.1);
+}
+
+.ranking-number {
+    font-size: 15px;
+    font-weight: 700;
+    color: #495057;
+    margin-bottom: 12px;
+    text-align: center; /* 가운데 정렬 */
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.ranking-item.rank-1 .ranking-number {
+    color: #d97706;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+.ranking-item.rank-2 .ranking-number {
+    color: #666;
+}
+
+.ranking-item.rank-3 .ranking-number {
+    color: #ff8c00;
+}
+
+/* 날짜 랭킹 아이템 */
+.date-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* 날짜와 참석 정보 사이 공백 증가 */
+}
+
+.date-text {
+    font-size: 19px;
+    font-weight: 700;
+    color: #212529;
+    text-align: center; /* 가운데 정렬 */
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+}
+
+.attendance-info {
+    font-size: 15px;
+    color: #212529; /* 검정색 */
+    text-align: center; /* 가운데 정렬 */
+    font-weight: 500;
+    letter-spacing: 0.2px;
+}
+
+/* 장소 랭킹 아이템 */
+.place-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.place-header {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 가운데 정렬 */
+    gap: 8px;
+    width: 100%;
+}
+
+.place-name {
+    font-size: 19px;
+    font-weight: 700;
+    color: #212529;
+    text-align: center; /* 가운데 정렬 */
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+}
+
+.recommendation-reason {
+    font-size: 15px;
+    color: #212529; /* 검정색 */
+    line-height: 1.6;
+    text-align: center; /* 가운데 정렬 */
+    font-weight: 400;
+    letter-spacing: 0.1px;
+}
+
+/* 정산 버튼 */
+.action-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 100px; /* 버튼 위 공백 증가 */
+}
+
+.settlement-button {
+    background: linear-gradient(135deg, var(--red-active) 0%, #e63946 100%);
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 240px;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.3), 0 2px 4px rgba(220, 38, 38, 0.2);
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.settlement-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.settlement-button:hover::before {
+    left: 100%;
+}
+
+.settlement-button:hover {
+    background: linear-gradient(135deg, #ffcccc 0%, #ff9999 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(220, 38, 38, 0.4), 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
+.settlement-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 16px;
+    }
+
+    .loading-container {
+        min-height: 300px;
+        gap: 24px;
+    }
+
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+    }
+
+    .spinner-dot {
+        width: 10px;
+        height: 10px;
+    }
+
+    .result-container {
+        gap: 0; /* gap은 사용하지 않고 개별 margin 사용 */
+    }
+
+    /* 모바일에서도 가로 배치 유지 */
+    .ranking-podium {
+        gap: 6px;
+    }
+
+    .ranking-item {
+        padding: 10px 8px;
+        font-size: 14px;
+    }
+    
+    .ranking-number {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    
+    .date-text,
+    .place-name {
+        font-size: 14px;
+    }
+    
+    .attendance-info,
+    .recommendation-reason {
+        font-size: 14px;
+    }
+
+    .date-text,
+    .place-name {
+        font-size: 16px;
+    }
+
+    .settlement-button {
+        width: 100%;
+        padding: 12px 24px;
+    }
+}
+
