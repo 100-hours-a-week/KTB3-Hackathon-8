@@ -39,9 +39,7 @@ const dom = {
     myPickBtn: null,
     submitAllBtn: null,
     viewResultBtn: null,
-    submitBtn: null,
-    loginRequiredModal: null,
-    loginConfirmBtn: null
+    submitBtn: null
 };
 
 // DOM 요소 초기화
@@ -67,8 +65,6 @@ function initDOM() {
     dom.submitAllBtn = document.getElementById('submitAllBtn');
     dom.viewResultBtn = document.getElementById('viewResultBtn');
     dom.submitBtn = document.getElementById('submitBtn');
-    dom.loginRequiredModal = document.getElementById('loginRequiredModal');
-    dom.loginConfirmBtn = document.getElementById('loginConfirmBtn');
 }
 
 // 모달 관리
@@ -478,12 +474,6 @@ function setupEventListeners() {
     if (dom.submitAllBtn) dom.submitAllBtn.addEventListener('click', handleSubmitAllClick);
     if (dom.viewResultBtn) dom.viewResultBtn.addEventListener('click', handleViewResultClick);
     
-    // 로그인 확인 버튼
-    if (dom.loginConfirmBtn) {
-        dom.loginConfirmBtn.addEventListener('click', () => {
-            window.location.href = '../../pages/LoginPage/login.html';
-        });
-    }
 }
 
 // 로그인 상태 확인 함수
@@ -514,11 +504,13 @@ function checkLoginStatus() {
     return false;
 }
 
-// 로그인 필요 팝업 표시
-function showLoginRequiredModal() {
-    if (dom.loginRequiredModal) {
-        dom.loginRequiredModal.style.display = 'flex';
-    }
+// 로그인 필요 toast 메시지 표시 및 리다이렉트
+function showLoginRequiredToast() {
+    showToast('로그인이 필요한 서비스입니다. 로그인 페이지로 이동합니다.');
+    // 2초 후 로그인 페이지로 리다이렉트
+    setTimeout(() => {
+        window.location.href = '../../pages/LoginPage/login.html';
+    }, 2000);
 }
 
 // 초기화
@@ -536,8 +528,8 @@ window.addEventListener('DOMContentLoaded', async () => {
     const isLoggedIn = checkLoginStatus();
     
     if (!isLoggedIn) {
-        // 로그인하지 않은 경우 로그인 필요 팝업 표시
-        showLoginRequiredModal();
+        // 로그인하지 않은 경우 로그인 필요 toast 메시지 표시 및 리다이렉트
+        showLoginRequiredToast();
     } else {
         // 로그인한 경우 그룹 생성 모달 표시
         modal.open();
