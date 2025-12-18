@@ -83,6 +83,7 @@ public class GroupService {
 
         return new GroupMeta(
                 isOwner,
+                group.getOwner().getNickname(),
                 group.isHasScheduledDate(),
                 group.getStartDate(),
                 group.getEndDate()
