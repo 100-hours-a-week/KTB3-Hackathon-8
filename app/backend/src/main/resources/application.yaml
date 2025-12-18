@@ -45,8 +45,11 @@ security:
     - /favicon.ico
     # Restaurant API
     - /api/v1/restaurants/**
-    # 그룹 정보 조회 (외부 사용자 접근 가능)
-    - /api/v1/group/**
+    # 그룹 API (인증 필요한 것 제외: POST /group, GET aggregation, GET invite-url)
+    - /api/v1/group/*/submissions
+    - /api/v1/group/*
+    # 제출 API (총무 통합 제출 제외)
+    - /api/v1/submission/user
 
   # anonymous: 미인증 사용자만 접근 가능 (로그인하면 접근 불가)
   anonymous-only-endpoints:
@@ -59,12 +62,6 @@ security:
     - /api/v1/auth/login
     - /api/v1/users/signup
     - /api/v1/users/exist/*
-    # 그룹 API (invite-url 제외)
-    - /api/v1/group/*/aggregation
-    - /api/v1/group/*/submissions
-    # 제출 API
-    - /api/v1/submission/user
-    - /api/v1/submission/total/*
 
 # 환경별 설정
 ---
@@ -129,7 +126,11 @@ security:
     - /actuator/**          # 개발 환경에서만 actuator 전체 공개
     - /h2-console/**        # H2 콘솔
     - /api/v1/restaurants/**  # Restaurant API
-    - /api/v1/group/**        # 그룹 정보 조회 (외부 사용자 접근 가능)
+    # 그룹 API (인증 필요한 것 제외: POST /group, GET aggregation, GET invite-url)
+    - /api/v1/group/*/submissions
+    - /api/v1/group/*
+    # 제출 API (총무 통합 제출 제외)
+    - /api/v1/submission/user
 
   anonymous-only-endpoints:
     - /user/login
@@ -139,12 +140,6 @@ security:
     - /api/v1/auth/login
     - /api/v1/users/signup
     - /api/v1/users/exist/*
-    # 그룹 API (invite-url 제외)
-    - /api/v1/group/*/aggregation
-    - /api/v1/group/*/submissions
-    # 제출 API
-    - /api/v1/submission/user
-    - /api/v1/submission/total/*
 
 ---
 spring:
@@ -184,7 +179,10 @@ security:
     - /fonts/**
     - /favicon.ico
     - /actuator/health
-    - /api/v1/group/*/invite-url
+    # 그룹 API (인증 필요한 것 제외: POST /group, GET aggregation, GET invite-url)
+    - /api/v1/group/*/submissions
+    - /api/v1/group/*
+    # 제출 API (총무 통합 제출 제외)
     - /api/v1/submission/user
 
   anonymous-only-endpoints:
