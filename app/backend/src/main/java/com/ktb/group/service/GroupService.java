@@ -4,6 +4,7 @@ import com.ktb.group.domain.Group;
 import com.ktb.group.dto.GroupFinalMeta;
 import com.ktb.group.dto.TempAggregation;
 import com.ktb.group.dto.request.CreateGroupRequest;
+import com.ktb.group.dto.response.GroupMeta;
 import com.ktb.group.exception.NonExistGroupException;
 import com.ktb.group.repository.GroupRepository;
 import com.ktb.user.repository.UserRepository;
@@ -73,5 +74,18 @@ public class GroupService {
         );
 
         return groupRepository.save(group).getId();
+    }
+
+    public GroupMeta getGroupInfo(Long requestUserId, Long groupId) {
+        Group group = groupRepository.findById(groupId).orElseThrow(NonExistGroupException::new);
+
+        boolean isOwner = requestUserId != 0L && group.getOwner().getId().equals(requestUserId);
+
+        return new GroupMeta(
+                isOwner,
+                group.isHasScheduledDate(),
+                group.getStartDate(),
+                group.getEndDate()
+        );
     }
 }
