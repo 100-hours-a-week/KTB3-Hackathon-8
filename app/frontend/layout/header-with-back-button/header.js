@@ -21,3 +21,17 @@ export async function loadHeader(container) {
     }
 }
 
+export async function initializeBackButton() {
+    const backButton = document.querySelector('.back-button');
+
+    if (backButton) {
+        backButton.addEventListener('click', () => {
+            if (window.location.pathname.includes('SignupPage')) {
+                window.location.href = '../../pages/LoginPage/login.html';
+            } else {
+                window.location.href = '../../pages/MainPage/main.html';
+            }
+        });
+    }
+
+}

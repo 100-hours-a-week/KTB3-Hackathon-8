@@ -5,21 +5,24 @@
 @import "variable.css";
 
 /* Components */
+@import "../../layout/header/header.css";
+@import "../../layout/header-with-back-button/header.css";
 /* @import "components/header.css";
 @import "components/footer.css";
 @import "components/modal.css";
 @import "components/form.css"; */
 
 /* Pages */
+@import "../pages/MainPage/main.css";
+@import "../pages/LoginPage/login.css";
 /* @import "pages/main.css"; */
 /* @import "pages/auth.css";
 @import "pages/password_update.css";
-@import "pages/post_detail.css";
 @import "pages/post_edit.css";
 @import "pages/post_list.css";
 @import "pages/profile_update.css";
 @import "pages/signup.css";
-@import "pages/signin.css"; */
+@import "pages/signin.css"; */ */
 
 html {
   /* min-width: 1440px; */
