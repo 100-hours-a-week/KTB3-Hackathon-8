@@ -41,9 +41,10 @@ openssl rsa -in src/main/resources/keys/jwtRS256.key -pubout -out src/main/resou
 6. [API 인증 설정](#api-인증-설정)
 7. [CSRF 설정](#csrf-설정)
 8. [외부 API 설정](#외부-api-설정)
-9. [실행 확인](#실행-확인)
-10. [Security 패턴 매칭 규칙](#security-패턴-매칭-규칙)
-11. [문제 해결](#문제-해결)
+9. [UTF-8 인코딩 설정](#utf-8-인코딩-설정)
+10. [실행 확인](#실행-확인)
+11. [Security 패턴 매칭 규칙](#security-패턴-매칭-규칙)
+12. [문제 해결](#문제-해결)
 
 ---
 
@@ -604,6 +605,119 @@ permit-all-endpoints:
   - /api/v1/group/*                 # ✅ /api/v1/group/123
   # POST /api/v1/group는 매칭 안됨 → 인증 필요
 ```
+
+---
+
+## UTF-8 인코딩 설정
+
+본 프로젝트는 **한글 데이터 처리**를 위해 UTF-8 인코딩이 필수로 설정되어 있습니다.
+
+### 자동 설정된 UTF-8 구성
+
+다음 항목들은 **이미 자동으로 설정**되어 있으므로 별도 설정이 필요 없습니다:
+
+#### 1. Gradle 빌드 설정 (build.gradle)
+
+```gradle
+// Java 컴파일 시 UTF-8 인코딩
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+// 애플리케이션 실행 시 UTF-8 인코딩
+tasks.named('bootRun') {
+    systemProperty 'file.encoding', 'UTF-8'
+    systemProperty 'sun.jnu.encoding', 'UTF-8'
+    jvmArgs '-Dfile.encoding=UTF-8'
+}
+
+// 테스트 실행 시 UTF-8 인코딩
+tasks.named('test') {
+    systemProperty 'file.encoding', 'UTF-8'
+    systemProperty 'sun.jnu.encoding', 'UTF-8'
+    jvmArgs '-Dfile.encoding=UTF-8'
+}
+```
+
+#### 2. Spring Boot 설정 (application.yaml)
+
+```yaml
+spring:
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+```
+
+#### 3. WebClient 설정 (SubmissionService.java)
+
+LLM 서버와의 통신 시 UTF-8 인코딩:
+
+```java
+private final WebClient webClient = WebClient.builder()
+        .baseUrl("http://3.236.242.98:8000")
+        .defaultHeader("Accept-Charset", StandardCharsets.UTF_8.name())
+        .exchangeStrategies(ExchangeStrategies.builder()
+                .codecs(configurer -> {
+                    ObjectMapper mapper = new ObjectMapper();
+                    configurer.defaultCodecs().jackson2JsonEncoder(
+                            new Jackson2JsonEncoder(mapper, MediaType.APPLICATION_JSON));
+                    configurer.defaultCodecs().jackson2JsonDecoder(
+                            new Jackson2JsonDecoder(mapper, MediaType.APPLICATION_JSON));
+                })
+                .build())
+        .build();
+```
+
+### 검증 방법
+
+#### 1. 테스트 실행
+
+```bash
+./gradlew test --tests "SubmissionControllerIntegrationTest"
+```
+
+테스트 출력에서 한글이 정상적으로 표시되는지 확인:
+```
+추천 레스토랑:
+  - 이름: Gatten Sushi Gangnam
+  - 이유: 피함 조건(생선, 매운음식, 육류)을 충족하며, 초밥을 제공하고...
+```
+
+#### 2. 실행 환경 확인
+
+```bash
+./gradlew bootRun
+```
+
+애플리케이션 로그에서 한글이 정상적으로 표시되는지 확인합니다.
+
+### JAR 실행 시 UTF-8 설정
+
+JAR 파일로 실행할 때도 자동으로 UTF-8이 적용되지만, 명시적으로 설정하려면:
+
+```bash
+# 개발 환경 (H2)
+java -Dfile.encoding=UTF-8 -jar build/libs/backend-0.0.1-SNAPSHOT.jar
+
+# 운영 환경 (PostgreSQL)
+java -Dfile.encoding=UTF-8 -jar build/libs/backend-0.0.1-SNAPSHOT.jar \
+  --spring.profiles.active=prod
+```
+
+### Docker 환경
+
+Docker 컨테이너에서 실행할 때는 Dockerfile에 다음을 추가:
+
+```dockerfile
+ENV LANG=ko_KR.UTF-8
+ENV LANGUAGE=ko_KR:ko
+ENV LC_ALL=ko_KR.UTF-8
+ENV JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
+```
+
+---
 
 ## 문제 해결
 

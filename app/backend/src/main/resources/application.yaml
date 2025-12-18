@@ -25,6 +25,11 @@ spring:
       max-request-size: 10MB
   jpa:
     open-in-view: false
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   sql:
     init:
       mode: never  # Hibernate가 DDL 자동 생성 (dev는 이 설정 사용)
@@ -53,8 +58,9 @@ security:
     # 그룹 API (인증 필요한 것 제외: POST /group, GET aggregation, GET invite-url)
     - /api/v1/group/*/submissions
     - /api/v1/group/*
-    # 제출 API (총무 통합 제출 제외)
+    # 제출 API
     - /api/v1/submission/user
+    - /api/v1/submission/total/*
 
   # anonymous: 미인증 사용자만 접근 가능 (로그인하면 접근 불가)
   anonymous-only-endpoints:
@@ -131,8 +137,9 @@ security:
     # 그룹 API (인증 필요한 것 제외: POST /group, GET aggregation, GET invite-url)
     - /api/v1/group/*/submissions
     - /api/v1/group/*
-    # 제출 API (총무 통합 제출 제외)
+    # 제출 API
     - /api/v1/submission/user
+    - /api/v1/submission/total/*
 
   anonymous-only-endpoints:
     - /user/login
@@ -189,8 +196,9 @@ security:
     # 그룹 API (인증 필요한 것 제외: POST /group, GET aggregation, GET invite-url)
     - /api/v1/group/*/submissions
     - /api/v1/group/*
-    # 제출 API (총무 통합 제출 제외)
+    # 제출 API
     - /api/v1/submission/user
+    - /api/v1/submission/total/*
 
   anonymous-only-endpoints:
     - /user/login
