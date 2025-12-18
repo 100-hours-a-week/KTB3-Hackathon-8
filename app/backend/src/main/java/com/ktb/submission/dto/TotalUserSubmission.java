@@ -1,4 +1,4 @@
-package com.ktb.userSubmission.dto;
+package com.ktb.submission.dto;
 
 import lombok.Getter;
 

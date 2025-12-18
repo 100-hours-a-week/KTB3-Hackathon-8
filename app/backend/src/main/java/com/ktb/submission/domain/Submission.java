@@ -1,13 +1,12 @@
-package com.ktb.userSubmission.domain;
+package com.ktb.submission.domain;
 
+import com.ktb.group.domain.Group;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.util.ArrayList;
-
 @Entity
 @Getter
-public class UserSubmission {
+public class Submission {
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
@@ -20,7 +19,8 @@ public class UserSubmission {
     )
     private Long id;
 
-    private Long groupId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    private Group group;
 
     private String nickname;
 

@@ -1,9 +1,6 @@
-package com.ktb.userSubmission.dto;
+package com.ktb.submission.dto;
 
-import com.ktb.userSubmission.domain.UserSubmission;
 import lombok.Getter;
-
-import java.util.ArrayList;
 
 @Getter
 public class PromptRequestDto {

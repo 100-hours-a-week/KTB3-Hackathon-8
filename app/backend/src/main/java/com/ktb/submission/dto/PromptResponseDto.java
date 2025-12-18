@@ -1,9 +1,8 @@
-package com.ktb.userSubmission.dto;
+package com.ktb.submission.dto;
 
 import lombok.Getter;
 
 import java.util.ArrayList;
-import lombok.NoArgsConstructor;
 
 
 @Getter
