@@ -1,4 +1,4 @@
-import { signOut } from '../api/auth.js';
+import { signOut } from '../api/AuthApi.js';
 import { setSessionAsLoggedOut } from './sessionManagers.js';   
 /**
  * 로그인 상태 확인 함수
