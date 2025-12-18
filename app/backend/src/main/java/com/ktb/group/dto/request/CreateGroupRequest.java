@@ -18,7 +18,7 @@ public record CreateGroupRequest(
         Integer budget,
 
         @Schema(description = "모임 날짜 지정 여부", example = "true")
-        @JsonProperty("has_schedlued_Date")
+        @JsonProperty("has_scheduled_Date")
         boolean hasScheduledDate,
 
         @Schema(description = "모임 날짜 지정 여부", example = "YYYY-MM-DD")
