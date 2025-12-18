@@ -7,7 +7,9 @@ import com.ktb.group.exception.NonExistGroupException;
 import com.ktb.group.repository.GroupRepository;
 import com.ktb.user.Repository.UserRepository;
 import com.ktb.user.domain.UserIdentifier;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ public class GroupService {
     }
 
     @Transactional
+    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
     public void submitMember(Long groupId, Long ownerId, String userNickname) {
         Group aggregation =
                 groupRepository.findByIdAndGroupOwner_Id(groupId, ownerId)
