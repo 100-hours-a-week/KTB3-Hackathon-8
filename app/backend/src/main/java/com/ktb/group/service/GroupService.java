@@ -23,7 +23,7 @@ public class GroupService {
     @Lock(value = LockModeType.PESSIMISTIC_READ)
     public TempAggregation getAggregation(Long groupId, Long ownerId) {
         Group aggregation =
-                groupRepository.findByIdAndMembers_User_IdAndMembers_IsOwner(groupId, ownerId, true)
+                groupRepository.findByIdAndOwnerIdWithMembers(groupId, ownerId)
                         .orElseThrow(NonExistGroupException::new);
 
         return TempAggregation.from(aggregation);
