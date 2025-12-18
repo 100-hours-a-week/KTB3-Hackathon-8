@@ -1,5 +1,5 @@
 import { showToast } from '../../js/common/messages.js';
-import { loadHeader } from '../../layout/header.js';
+import { loadHeader } from '../../layout/header/header.js';
 import { validateGroupForm, validateGroupFormSubmit, extractGroupFormData } from '../../js/common/validators.js';
 import { createGroup, getGroupMembers, getGroupStatus, submitAllPicks } from '../../js/api/GenerateGroupApi.js';
 
