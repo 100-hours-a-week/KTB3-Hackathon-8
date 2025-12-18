@@ -41,6 +41,8 @@ public class SubmissionService {
 
     private final RestaurantSearchService restaurantSearchService;
 
+    private final GroupService groupService;
+
     private final static String ALREADY_SUBMITTED = "이미 제출한 사용자입니다.";
 
     public void userSubmit(Long groupId, SubmitRequest submission) {
@@ -53,6 +55,8 @@ public class SubmissionService {
                 });
 
         submissionRepository.save(submission.toEntity(group));
+
+        groupService.submitMember(groupId, group.getOwner().getId(), submission.nickname());
     }
 
     public FinalResponseDto totalSubmit(Long groupId){

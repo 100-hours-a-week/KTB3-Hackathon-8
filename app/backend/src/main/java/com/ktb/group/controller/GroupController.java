@@ -85,22 +85,6 @@ public class GroupController {
         return ResponseEntity.ok().body(aggregation);
     }
 
-    @Operation(summary = "그룹 멤버 제출", description = "사용자를 그룹에 제출합니다")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "제출 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "404", description = "그룹 또는 사용자를 찾을 수 없음")
-    })
-    @PostMapping("/{groupId}/{ownerId}/submissions")
-    public ResponseEntity<Void> submit(
-            @Parameter(description = "그룹 ID", required = true) @PathVariable Long groupId,
-            @Parameter(description = "그룹 오너 ID", required = true) @PathVariable Long ownerId,
-            @Parameter(description = "제출할 사용자 닉네임", required = true) @RequestParam(required = true) String userNickname
-    ) {
-        groupService.submitMember(groupId, ownerId, userNickname);
-        return ResponseEntity.ok().build();
-    }
-
     @Operation(summary = "초대 URL 생성", description = "그룹 초대 URL을 생성하고 리다이렉트합니다")
     @ApiResponses({
             @ApiResponse(responseCode = "303", description = "리다이렉트 성공"),
