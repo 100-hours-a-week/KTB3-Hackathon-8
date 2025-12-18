@@ -14,5 +14,14 @@ export async function signUp(id, nickname, password) {
 
  */
 export async function signIn(username, password) {
-    return await fetchAPIWithBody(`/auth/login`,'POST', JSON.stringify({ username, password }) );
+    return await fetchAPIWithBody(`${API_BASE}/auth/login`,'POST', JSON.stringify({ username, password }) );
+}
+
+
+/**
+ * 로그아웃
+
+ */
+export async function signOut() {
+    return await fetchAPI(`${API_BASE}/auth/logout`,'POST');
 }

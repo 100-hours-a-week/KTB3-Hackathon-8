@@ -96,10 +96,7 @@ export function initializeUserDropdown(container = null) {
             e.stopPropagation();
             try {
                 // 로그아웃 API 호출
-                const response = await fetch('http://localhost:8080/api/v1/auth/logout', {
-                    method: 'POST',
-                    credentials: 'include'
-                });
+                const response = await signOut();
                 
                 if (response.ok) {
                     // 쿠키와 localStorage 정리
