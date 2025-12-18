@@ -59,11 +59,18 @@ public class GroupService {
         return GroupFinalMeta.from(group);
     }
 
-//    public void createGroup(Long ownerId, Integer maxCapacity, String station, Integer budget, boolean hasScheduledDate) {
     public void createGroup(CreateGroupRequest groupRequest) {
         UserIdentifier user = userRepository.findById(groupRequest.ownerId()).orElseThrow();
         //Long ownerId, Integer maxCapacity, String station, Integer budget
-        Group group = Group.create(user, groupRequest.maxCapacity(), groupRequest.station(),  groupRequest.budget(), groupRequest.hasScheduledDate());
+        Group group = Group.create(
+                user,
+                groupRequest.maxCapacity(),
+                groupRequest.station(),
+                groupRequest.budget(),
+                groupRequest.hasScheduledDate(),
+                groupRequest.startDate(),
+                groupRequest.endDate()
+        );
 
         groupRepository.save(group);
     }

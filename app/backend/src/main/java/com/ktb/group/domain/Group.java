@@ -16,6 +16,7 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -56,8 +57,14 @@ public class Group {
 
     private String station;
 
-    @Column(nullable = false)
+    @Column(name = "has_scheduled_date", nullable = false)
     private boolean hasScheduledDate;
+
+    @Column(name = "start_date")
+    private Date startDate;
+
+    @Column(name = "end_date")
+    private Date endDate;
 
     public void submitMember(UserIdentifier user) {
         if (members.size() >= maxCapacity) {
@@ -80,7 +87,24 @@ public class Group {
                 .collect(Collectors.toSet());
     }
 
-    public static Group create(UserIdentifier owner, Integer maxCapacity, String station, Integer budget, boolean hasScheduledDate) {
-        return new Group(null, maxCapacity, Collections.emptyList(), owner, budget, station, hasScheduledDate);
+    public static Group create(
+            UserIdentifier owner,
+            Integer maxCapacity,
+            String station,
+            Integer budget,
+            boolean hasScheduledDate,
+            Date startDate,
+            Date endDate
+    ) {
+        return new Group(null,
+                (maxCapacity == null) ? 0 : maxCapacity,
+                Collections.emptyList(),
+                owner,
+                (budget == null) ? 0: budget,
+                (station == null || station.isEmpty()) ? "" : station,
+                hasScheduledDate,
+                (startDate == null) ? new Date() : startDate,
+                (endDate == null) ? new Date() : endDate
+        );
     }
 }
