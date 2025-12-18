@@ -77,14 +77,14 @@
     background-color: var(--red-disabled);
 }
 
-#dates{
+#dates {
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 16px;
 }
 
-#dates:focus{
+#dates:focus {
   outline: none;
   border-color: var(--red-active);
 }
