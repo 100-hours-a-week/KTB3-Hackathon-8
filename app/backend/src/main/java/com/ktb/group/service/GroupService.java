@@ -16,14 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class GroupService {
-    private GroupRepository groupRepository;
-    private UserRepository userRepository;
+    private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
     @Lock(value = LockModeType.PESSIMISTIC_READ)
     public TempAggregation getAggregation(Long groupId, Long ownerId) {
         Group aggregation =
-                groupRepository.findByIdAndGroupOwner_Id(groupId, ownerId)
+                groupRepository.findByIdAndMembers_User_IdAndMembers_IsOwner(groupId, ownerId, true)
                         .orElseThrow(NonExistGroupException::new);
 
         return TempAggregation.from(aggregation);
@@ -33,10 +33,11 @@ public class GroupService {
     @Lock(value = LockModeType.PESSIMISTIC_WRITE)
     public void submitMember(Long groupId, Long ownerId, String userNickname) {
         Group aggregation =
-                groupRepository.findByIdAndGroupOwner_Id(groupId, ownerId)
+                groupRepository.findByIdAndMembers_User_IdAndMembers_IsOwner(groupId, ownerId, true)
                         .orElseThrow(NonExistGroupException::new);
 
-        UserIdentifier submitUser = (UserIdentifier) userRepository.findUserIdentifierByNickName(userNickname).orElseThrow();
+        UserIdentifier submitUser = userRepository.findByNickname(userNickname)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + userNickname));
 
         aggregation.submitMember(submitUser);
     }
@@ -49,7 +50,7 @@ public class GroupService {
     @Lock(value = LockModeType.PESSIMISTIC_READ)
     public GroupFinalMeta getGroupCompletionMeta(Long groupId, Long ownerId) {
         Group group =
-                groupRepository.findByIdAndGroupOwner_Id(groupId, ownerId)
+                groupRepository.findByIdAndMembers_User_IdAndMembers_IsOwner(groupId, ownerId, true)
                         .orElseThrow(NonExistGroupException::new);
 
         group.validateAllSubmitted();

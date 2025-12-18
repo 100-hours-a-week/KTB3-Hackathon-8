@@ -5,5 +5,5 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
-    Optional<Group> findByIdAndGroupOwner_Id(Long id, Long ownerId);
+    Optional<Group> findByIdAndMembers_User_IdAndMembers_IsOwner(Long groupId, Long ownerId, boolean isOwner);
 }

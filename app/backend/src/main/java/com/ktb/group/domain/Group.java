@@ -3,19 +3,21 @@ package com.ktb.group.domain;
 import com.ktb.group.exception.FullJoinMemberException;
 import com.ktb.group.exception.GroupSubmissionNotCompletedException;
 import com.ktb.user.domain.UserIdentifier;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +25,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(schema = "join_group")
+@Table(name = "submit_group")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Group {
@@ -42,43 +44,31 @@ public class Group {
     @Column(name = "max_capacity")
     private int maxCapacity;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "owner_user_id", nullable = false)
-    private UserIdentifier groupOwner;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "submitted_members")
-    private Set<UserIdentifier> submitMembers;
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
+    private List<GroupMember> members = new ArrayList<>();
 
     private int budget;
+
     private String station;
 
-    public static Group create(int maxCapacity, UserIdentifier groupOwner, Set<UserIdentifier> submitMembers, int budget, String station) {
-        if(!submitMembers.contains(groupOwner)) {
-            submitMembers.add(groupOwner);
-        }
-
-        return new Group(null, maxCapacity, groupOwner, submitMembers, budget, station);
-    }
-
-    public static Group create(int maxCapacity, UserIdentifier groupOwner, int budget, String station) {
-        Set<UserIdentifier> joinMembers = new HashSet<>();
-        joinMembers.add(groupOwner);
-
-        return new Group(null, maxCapacity, groupOwner, joinMembers, budget, station);
-    }
-
     public void submitMember(UserIdentifier user) {
-        if (submitMembers.size() >= maxCapacity) {
+        if (members.size() >= maxCapacity) {
             throw new FullJoinMemberException();
         }
 
-        submitMembers.add(user);
+        GroupMember groupMember = GroupMember.createMember(this, user);
+        members.add(groupMember);
     }
 
     public void validateAllSubmitted() {
-        if(! (submitMembers.size() == maxCapacity) ) {
+        if (members.size() != maxCapacity) {
             throw new GroupSubmissionNotCompletedException();
         }
+    }
+
+    public Set<UserIdentifier> getSubmitMembers() {
+        return members.stream()
+                .map(GroupMember::getUser)
+                .collect(Collectors.toSet());
     }
 }
