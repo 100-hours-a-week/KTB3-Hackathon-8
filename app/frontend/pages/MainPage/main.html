@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>메인 - 그룹 생성</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../layout/header.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <!-- 헤더 (공통 컴포넌트) -->
+    <div id="header-container"></div>
+
+    <!-- 메인 컨텐츠 -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <!-- 그룹 생성 버튼 -->
+            <button class="group-create-btn" id="groupCreateBtn">그룹 생성</button>
+
+            <!-- URL 표시 영역 (그룹 생성 후 표시) -->
+            <div class="url-section" id="urlSection" style="display: none;">
+                <div class="url-display">
+                    <span class="url-label">URL :</span>
+                    <span class="url-value" id="urlValue"></span>
+                    <button class="copy-btn" id="copyBtn" title="복사">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 제출 현황 -->
+            <div class="submission-status" id="submissionStatus" style="display: none;">
+                <div class="status-display" id="statusDisplay">
+                    제출 현황 : <span id="submissionCount">0</span> / <span id="totalMembers">0</span>
+                </div>
+                <div class="submission-list" id="submissionList" style="display: none;">
+                    <div class="list-title">제출한 멤버</div>
+                    <ul class="member-list" id="memberList"></ul>
+                </div>
+            </div>
+
+            <!-- 중간 집계 (선택사항) -->
+            <div class="intermediate-tally" id="intermediateTally" style="display: none;">
+                <div class="tally-display">
+                    중간 집계 : <span id="tallyCount">0</span> / <span id="tallyTotal">0</span>
+                </div>
+            </div>
+
+            <!-- 알림 메시지 -->
+            <div class="alert-message" id="alertMessage" style="display: none;">
+                <div class="alert-content">
+                    <span class="alert-icon">⚠️</span>
+                    <span class="alert-text">모든 멤버가 작성 완료하였습니다!</span>
+                    <button class="alert-close" id="alertClose">×</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 푸터 네비게이션 -->
+    <footer class="main-footer">
+        <button class="footer-btn" id="myPickBtn">나의 회식픽 -></button>
+        <button class="footer-btn" id="submitAllBtn">전체 회식픽 제출</button>
+        <button class="footer-btn" id="viewResultBtn" disabled>결과보기</button>
+    </footer>
+
+    <!-- 그룹 생성 모달 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">그룹 생성</h2>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <form class="group-form" id="groupForm">
+                <div class="form-group">
+                    <label class="form-label required">멤버 수 :</label>
+                    <input type="number" class="form-input" id="memberCount" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">예산 :</label>
+                    <div class="budget-input-group">
+                        <input type="number" class="form-input budget-input" id="budgetMin" min="0" required>
+                        <span class="input-separator">~</span>
+                        <input type="number" class="form-input budget-input" id="budgetMax" min="0" required>
+                        <span class="input-unit">만원</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">날짜:</label>
+                    <div class="toggle-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dateToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="date-note">날짜 조건 설정 시 date area 활성화</div>
+                    <div class="date-area" id="dateArea" style="display: none;">
+                        <div class="date-input-group">
+                            <input type="datetime-local" class="form-input date-input" id="dateStart" required>
+                            <span class="input-separator">~</span>
+                            <input type="datetime-local" class="form-input date-input" id="dateEnd" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">모임 장소 :</label>
+                    <div class="station-select-wrapper">
+                        <input type="text" class="form-input station-input" id="stationInput" placeholder="역 검색" required>
+                        <div class="station-dropdown" id="stationDropdown" style="display: none;"></div>
+                        <span class="input-unit">역</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">설정 완료</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast 메시지 컨테이너 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
+
