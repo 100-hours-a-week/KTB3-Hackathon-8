@@ -76,7 +76,7 @@ window.addEventListener('DOMContentLoaded', async () => {
             const response = await signUp(id, nickname, password);
             if (response.ok) {
                 // 회원가입 성공 시 로그인 페이지로 이동
-                window.location.href = '/login.html';
+                window.location.href = '/pages/LoginPage/login.html';
             } else if (response.status === 409) {
                 // 중복된 ID인 경우
                 helperText.textContent = '이미 존재하는 ID입니다. 다른 ID를 사용해주세요.';
