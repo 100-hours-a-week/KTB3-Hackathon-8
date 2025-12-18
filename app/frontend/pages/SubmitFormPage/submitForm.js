@@ -1,6 +1,6 @@
 import { isInvalidNickname } from '../../js/common/validators.js';
 import { loadHeader } from '../../layout/header/header.js';
-import { submitSingle } from '../../js/api/SubmissionApi.js';
+import { submitSingle } from '../../js/api/SubmissionAPI.js';
 import { getGroupSettings } from '../../js/api/GroupApi.js';
 import { showToast } from '../../js/common/messages.js';
 import { getGroupIdFromSession, getIsLoggedInFromSession } from '../../js/common/sessionManagers.js';
