@@ -21,6 +21,11 @@
     margin-bottom: 4px;
 }
 
+.menu-input-group .field-group {
+    gap: 12px; /* label과 input 사이 간격 줄이기 */
+    justify-content: flex-start !important; /* justify-between 대신 flex-start 사용 */
+}
+
 .field-group select {
     padding: 4px 6px;
     font-size: 16px;
@@ -48,6 +53,12 @@
     padding: 8px;
     font-size: 16px;
     border-radius: 4px;
+}
+
+.menu-input-group .form-label {
+    width: 60px; /* label 너비 고정 (가장 긴 '비선호:'에 맞춤) */
+    flex-shrink: 0; /* label이 줄어들지 않도록 */
+    text-align: left; /* 텍스트 왼쪽 정렬 */
 }
 
 .menu-input-group .helper-text {
