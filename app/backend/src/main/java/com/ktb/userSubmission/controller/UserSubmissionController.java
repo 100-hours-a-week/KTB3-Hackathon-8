@@ -1,20 +1,19 @@
 package com.ktb.userSubmission.controller;
 
-import com.ktb.ResponseDto;
+import com.ktb.userSubmission.dto.ResponseDto;
 import com.ktb.userSubmission.domain.UserSubmission;
-import com.ktb.userSubmission.dto.PromptRequestDto;
 import com.ktb.userSubmission.dto.PromptResponseDto;
 import com.ktb.userSubmission.service.UserSubmissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/v1/submission")
 public class UserSubmissionController {
-
-
     UserSubmissionService userSubmissionService;
 
     @Autowired
@@ -22,10 +21,8 @@ public class UserSubmissionController {
         this.userSubmissionService = userSubmissionService;
     }
 
-
-
     //맴버 개별 제출
-    @PostMapping("/userSubmission")
+    @PostMapping("/user")
     public ResponseDto userSubmit(@RequestBody UserSubmission userSubmission){
 
         try{
@@ -44,10 +41,8 @@ public class UserSubmissionController {
 
     }
 
-
-
     //총무 통합 제출
-    @PostMapping("userSubmission/total/{groupId}")
+    @PostMapping("/total/{groupId}")
     public ResponseDto totalSubmit(@PathVariable Long groupId){
 
         PromptResponseDto promptResponse = userSubmissionService.totalSubmit(groupId);
@@ -55,12 +50,4 @@ public class UserSubmissionController {
         return new ResponseDto(null, "success");
 
     }
-
-
-
-
-
-
-
-
 }

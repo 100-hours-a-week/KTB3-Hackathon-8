@@ -5,6 +5,7 @@ import com.ktb.userSubmission.dto.PromptRequestDto;
 import com.ktb.userSubmission.dto.PromptResponseDto;
 import com.ktb.userSubmission.dto.TotalUserSubmission;
 import com.ktb.userSubmission.repository.UserSubmissionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.stereotype.Service;
@@ -14,21 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserSubmissionService {
-
-
     UserSubmissionRepository userSubmissionRepository;
 
-    @Autowired
-    public UserSubmissionService(UserSubmissionRepository userSubmissionRepository){
-        this.userSubmissionRepository = userSubmissionRepository;
-    }
-
-
-
-
-
-    public UserSubmission userSubmit(UserSubmission userSubmission){
+    public UserSubmission userSubmit(UserSubmission userSubmission) {
 
         Optional<UserSubmission> existingSubmission =
                 userSubmissionRepository.findByNickname(userSubmission.getNickname());
@@ -38,14 +29,11 @@ public class UserSubmissionService {
             throw new IllegalStateException("이미 제출한 사용자입니다.");
         }
 
-        return userSubmissionRepository.save(userSubmission).orElse(new UserSubmission());
+        return userSubmissionRepository.save(userSubmission);
 
     }
 
-
-
     public PromptResponseDto totalSubmit(Long groupId){
-
         List<UserSubmission> submissions =
                 userSubmissionRepository.findAllByGroupId(groupId);
 
@@ -72,25 +60,10 @@ public class UserSubmissionService {
             }
         }
 
-
         //1. LLM 요청
         PromptRequestDto promptRequest = new PromptRequestDto(null, total);
 
         //2. LLM 응답 -> 파싱&포매팅 후 return
         return null;
-
-
-
-
     }
-
-
-
-
-
-
-
-
-
-
 }

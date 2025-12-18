@@ -8,8 +8,6 @@ import java.util.ArrayList;
 @Entity
 @Getter
 public class UserSubmission {
-
-
     @Id
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
@@ -24,26 +22,11 @@ public class UserSubmission {
 
     private Long groupId;
 
-
     private String nickname;
 
     private String likedFoods;
+
     private String disLikedFoods;
+
     private String forbiddenFoods;
-
-
-    //private ArrayList<String> possibleDates;
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
