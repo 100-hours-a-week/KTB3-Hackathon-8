@@ -5,7 +5,7 @@ import com.ktb.group.dto.GroupFinalMeta;
 import com.ktb.group.dto.TempAggregation;
 import com.ktb.group.exception.NonExistGroupException;
 import com.ktb.group.repository.GroupRepository;
-import com.ktb.user.Repository.UserRepository;
+import com.ktb.user.repository.UserRepository;
 import com.ktb.user.domain.UserIdentifier;
 import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class GroupService {
                 groupRepository.findByIdAndGroupOwner_Id(groupId, ownerId)
                         .orElseThrow(NonExistGroupException::new);
 
-        UserIdentifier submitUser = userRepository.findUserIdentifierByNickName(userNickname).orElseThrow();
+        UserIdentifier submitUser = (UserIdentifier) userRepository.findUserIdentifierByNickName(userNickname).orElseThrow();
 
         aggregation.submitMember(submitUser);
     }
