@@ -1,5 +1,6 @@
 package com.ktb.submission.controller;
 
+import com.ktb.auth.adapter.SecurityUserAccount;
 import com.ktb.submission.domain.Submission;
 import com.ktb.submission.dto.PromptResponseDto;
 import com.ktb.submission.dto.request.SubmitRequest;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SubmissionController {
     private final SubmissionService submissionService;
 
-    @Operation(summary = "멤버 개별 제출", description = "그룹 멤버가 개별적으로 메뉴를 제출합니다")
+    @Operation(summary = "멤버 개별 제출", description = "그룹 멤버가 개별적으로 메뉴를 제출합니다. 총무는 닉네임 정보를 입력하지 않아도 됩니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "제출 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
@@ -36,10 +38,14 @@ public class SubmissionController {
     public ResponseEntity<Void> userSubmit(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "제출 정보", required = true,
-                    content = @Content(schema = @Schema(implementation = Submission.class)))
+                    content = @Content(schema = @Schema(implementation = SubmitRequest.class)))
             @RequestBody SubmitRequest submission,
-            @PathVariable Long groupId
-    ) {
+            @PathVariable Long groupId,
+            @AuthenticationPrincipal SecurityUserAccount principal
+            ) {
+        if (principal.getAccount() != null) {
+            submission = submission.withNickname(principal.getAccount().getNickname());
+        }
         submissionService.userSubmit(groupId, submission);
         return ResponseEntity.ok().build();
     }

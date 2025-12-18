@@ -33,4 +33,17 @@ public record SubmitRequest(
                         excludedDates
                 );
         }
+
+        public SubmitRequest withNickname(String newNickname) {
+                return new SubmitRequest(
+                        newNickname,
+                        this.gender,
+                        this.age,
+                        this.excludedDates,
+                        this.preferredFoods,
+                        this.avoidedFoods,
+                        this.excludedFoods
+                );
+        }
+
 }
