@@ -4,10 +4,13 @@ import com.ktb.group.domain.Group;
 import com.ktb.group.exception.NonExistGroupException;
 import com.ktb.group.repository.GroupRepository;
 import com.ktb.group.service.GroupService;
+import com.ktb.restaurant.google.dto.PlaceSummaryDto;
+import com.ktb.restaurant.google.service.RestaurantSearchService;
 import com.ktb.submission.domain.Submission;
 import com.ktb.submission.dto.FinalResponseDto;
 import com.ktb.submission.dto.TotalUserSubmission;
 import com.ktb.submission.dto.request.AiGenerateRequest;
+import com.ktb.submission.dto.request.RestaurantCandidate;
 import com.ktb.submission.dto.request.SubmitRequest;
 import com.ktb.submission.dto.response.AiGenerateResponse;
 import com.ktb.submission.dto.response.AiRecommendation;
@@ -35,6 +38,8 @@ public class SubmissionService {
     private final SubmissionRepository submissionRepository;
 
     private final GroupRepository groupRepository;
+
+    private final RestaurantSearchService restaurantSearchService;
 
     private final static String ALREADY_SUBMITTED = "이미 제출한 사용자입니다.";
 
@@ -80,23 +85,43 @@ public class SubmissionService {
             budgetPerPerson = budget / totalPeopleCnt;
         }
 
+        // Google Places API로 후보 레스토랑 검색
+        List<PlaceSummaryDto> placeSummaries = restaurantSearchService.findRestaurantsByStation(group.getStation());
+        log.info("Found {} restaurant candidates for station: {}", placeSummaries.size(), group.getStation());
+
+        // PlaceSummaryDto를 Python Restaurant 스키마로 변환
+        List<RestaurantCandidate> candidates = placeSummaries.stream()
+                .map(RestaurantCandidate::fromPlaceSummary)
+                .toList();
+
         // AI 요청
         AiGenerateRequest request = new AiGenerateRequest(
                 group.getMaxCapacity(),                       // people
-                null,                       // location
+                group.getStation(),                          // location (필수)
                 total.getLikedFoodsList(),  // preferences
                 total.getDisLikedFoodsList(), // avoid
                 budgetPerPerson,                       // budget_per_person
-                null,                       // candidates
+                candidates,                              // candidates (Python Restaurant 스키마 형식)
                 400                         // max_new_tokens
         );
+
+        log.info("Sending request to LLM server: {}", request);
 
         AiGenerateResponse aiResponse = webClient.post()
                 .uri("/generate")
                 .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(request)
                 .retrieve()
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(),
+                        response -> response.bodyToMono(String.class)
+                                .doOnNext(errorBody -> log.error("LLM Server Error Response: {}", errorBody))
+                                .map(errorBody -> new RuntimeException("LLM Server Error (" + response.statusCode() + "): " + errorBody))
+                )
                 .bodyToMono(AiGenerateResponse.class)
+                .doOnSuccess(resp -> log.info("LLM response received: {}", resp))
+                .doOnError(error -> log.error("LLM request failed", error))
                 .block();
 
         AiGenerateResponse aiGenerateResponse = new AiGenerateResponse(aiResponse.getResults());

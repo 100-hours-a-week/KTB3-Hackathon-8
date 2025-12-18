@@ -30,13 +30,21 @@ public class GooglePlacesApiClient {
                 .build();
     }
 
-    // 1) 역 검색: formattedAddress “만 필요”하더라도 Nearby용 좌표 때문에 location은 최소로 같이 받음
+    // 1) 역 검색: formattedAddress "만 필요"하더라도 Nearby용 좌표 때문에 location은 최소로 같이 받음
     public StationTextSearchResponse searchStation(String stationQuery) {
         return webClient.post()
                 .uri("/places:searchText")
                 .header("X-Goog-FieldMask", STATION_FIELD_MASK)
                 .bodyValue(Map.of("textQuery", stationQuery))
                 .retrieve()
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(),
+                        response -> response.bodyToMono(String.class)
+                                .map(errorBody -> {
+                                    System.err.println("Google API Error Response: " + errorBody);
+                                    return new RuntimeException("Google API Error: " + errorBody);
+                                })
+                )
                 .bodyToMono(StationTextSearchResponse.class)
                 .block();
     }

@@ -1,5 +1,6 @@
 package com.ktb.submission.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -9,16 +10,17 @@ import java.util.List;
 @AllArgsConstructor
 public class AiGenerateRequest {
 
-
     private Integer people;
     private String location;
 
     private List<String> preferences;
     private List<String> avoid;
 
-    private Integer budget_per_person;
+    @JsonProperty("budget_per_person")
+    private Integer budgetPerPerson;
 
-    private Object candidates;
+    private List<RestaurantCandidate> candidates;
 
-    private int max_new_tokens;
+    @JsonProperty("max_new_tokens")
+    private int maxNewTokens;
 }
