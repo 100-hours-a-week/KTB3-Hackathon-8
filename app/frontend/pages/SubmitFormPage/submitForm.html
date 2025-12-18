@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>부장님 여기요</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
     <!-- 헤더 (공통 컴포넌트) -->
@@ -40,6 +41,10 @@
                             <option value="60대"> 60대
                         </select>
                     </div>
+                    <div class="field-group row flex-container justify-between align-center">
+                        <label class="form-label" for="dates">불가능한 날짜: </label>
+                        <input type="text" id="dates" name="dates" placeholder="참석 불가한 날짜들을 선택하세요" readonly>
+                    </div>
                 </div>
                 <div class = "menu-input-group">
                     <h5 class="form-category"><메뉴></h5>
@@ -70,6 +75,17 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script type="module" src="submitForm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+
+    <script>
+        flatpickr("#dates", {
+            mode: "multiple",        // 여러 날짜 선택
+            dateFormat: "Y-m-d",     // 값 형식
+            locale: "ko",
+            minDate: "today"         // 필요 없으면 삭제
+        });
+    </script>
 </body>
 </html>
 

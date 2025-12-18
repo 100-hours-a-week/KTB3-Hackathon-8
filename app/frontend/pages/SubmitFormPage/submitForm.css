@@ -69,6 +69,22 @@
     transition: background-color 0.3s;
 }
 
+.menu-input-group input {
+    width: 280px;
+}
+
 .submit-button:disabled {
     background-color: var(--red-disabled);
+}
+
+#dates{
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+#dates:focus{
+  outline: none;
+  border-color: var(--red-active);
 }
