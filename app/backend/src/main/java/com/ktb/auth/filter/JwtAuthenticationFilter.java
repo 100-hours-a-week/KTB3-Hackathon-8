@@ -3,6 +3,7 @@ package com.ktb.auth.filter;
 import com.ktb.auth.adapter.SecurityUserAccount;
 import com.ktb.auth.service.CustomUserDetailService;
 import com.ktb.auth.util.JwtTokenProvider;
+import com.ktb.group.exception.AuthenticationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
