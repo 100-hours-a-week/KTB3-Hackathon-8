@@ -5,8 +5,8 @@
 @import "variable.css";
 
 /* Components */
-@import "../../layout/header/header.css";
-@import "../../layout/header-with-back-button/header.css";
+@import "../layout/header/header.css";
+@import "../layout/header-with-back-button/header.css";
 /* @import "components/header.css";
 @import "components/footer.css";
 @import "components/modal.css";
