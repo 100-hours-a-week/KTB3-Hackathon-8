@@ -1,6 +1,7 @@
 package com.ktb.group.domain;
 
 import com.ktb.group.exception.FullJoinMemberException;
+import com.ktb.group.exception.GroupSubmissionNotCompletedException;
 import com.ktb.user.domain.UserIdentifier;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -73,5 +74,11 @@ public class Group {
         }
 
         submitMembers.add(user);
+    }
+
+    public void validateAllSubmitted() {
+        if(! (submitMembers.size() == maxCapacity) ) {
+            throw new GroupSubmissionNotCompletedException();
+        }
     }
 }
