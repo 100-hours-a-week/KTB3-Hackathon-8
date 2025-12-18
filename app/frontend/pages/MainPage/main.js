@@ -1,9 +1,10 @@
 import { showToast } from '../../js/common/messages.js';
 import { loadHeader } from '../../layout/header/header.js';
 import { validateGroupForm, validateGroupFormSubmit, extractGroupFormData, loadStations, getStations } from '../../js/common/validators.js';
-import { createGroup, getGroupMembers, getGroupStatus } from '../../js/api/GenerateGroupApi.js';
+import { createGroup, getGroupStatus } from '../../js/api/GenerateGroupApi.js';
 import { submitAggregation } from '../../js/api/SubmissionAPI.js';
 import { getGroupIdFromSession } from '../../js/common/sessionManagers.js';
+import { getGroupSubmitStatus } from '../../js/api/GroupApi.js';
 
 // 날짜 형식 변환 함수
 function formatDateTime(dateTimeString) {
@@ -322,9 +323,21 @@ function handleViewResultClick() {
 }
 
 // 제출 현황 업데이트
-function updateSubmissionStatus(submitted, total) {
+async function updateSubmissionStatus(submitted, total) {
+
+    const submissionStatusResponse = await getGroupSubmitStatus(groupId, ownerId);
+    let submitted;
+    let total;
+    let submissionList;
+    if (submissionStatusResponse.ok) {
+        const statusData = await submissionStatusResponse.json();
+        submitted = statusData.submit_count || 0;
+        total = statusData.total_user_count || 0;
+        submissionList = statusData.user_nickname_list || [];
+    }
     submissionData.submitted = submitted;
     submissionData.total = total;
+    submissionData.members = submissionList;
 
     const submissionCountEl = document.getElementById('submissionCount');
     const totalMembersEl = document.getElementById('totalMembers');
@@ -335,7 +348,7 @@ function updateSubmissionStatus(submitted, total) {
     if (dom.submissionStatus) {
         dom.submissionStatus.style.display = 'block';
         // 제출 현황이 표시되면 자동으로 멤버 목록 로드
-        loadSubmissionMembers();
+        displayMemberList(submissionData.members);
     }
 
     if (submitted === total && total > 0) {
@@ -343,25 +356,6 @@ function updateSubmissionStatus(submitted, total) {
         if (dom.myPickBtn) dom.myPickBtn.disabled = true;
         if (dom.submitAllBtn) dom.submitAllBtn.disabled = true;
         if (dom.viewResultBtn) dom.viewResultBtn.disabled = false;
-    }
-}
-
-// 멤버 목록 로드
-async function loadSubmissionMembers() {
-    try {
-        const response = await getGroupMembers(groupData?.id);
-
-        if (response.ok) {
-            const data = await response.json();
-            submissionData.members = data.members || [];
-            displayMemberList(submissionData.members);
-        } else {
-            const errorData = await response.json().catch(() => ({}));
-            showToast(errorData.message || '멤버 목록을 불러오는데 실패했습니다.');
-        }
-    } catch (error) {
-        console.error('Error loading members:', error);
-        showToast('멤버 목록을 불러오는 중 오류가 발생했습니다.');
     }
 }
 
