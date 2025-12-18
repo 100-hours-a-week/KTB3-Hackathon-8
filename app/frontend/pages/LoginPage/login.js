@@ -1,4 +1,4 @@
-import { signIn } from '../../api/auth.js';
+import { signIn } from '../../js/api/AuthApi.js';
 import { loadHeader, initializeBackButton } from '../../layout/header-with-back-button/header.js';
 
 window.addEventListener('DOMContentLoaded', async () => {

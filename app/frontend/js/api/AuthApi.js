@@ -1,4 +1,4 @@
-import { fetchAPIWithBody } from "./api_fetcher";
+import { fetchAPIWithBody, fetchAPI } from "./api_fetcher.js";
 import { API_BASE } from '../../config.js';
 
 /**
