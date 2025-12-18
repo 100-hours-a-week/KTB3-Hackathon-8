@@ -1,5 +1,6 @@
 package com.ktb.submission.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -20,7 +21,7 @@ public class EventDate {
     @JoinColumn(name = "submission_id", nullable = false)
     private Submission submission;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "date_value")
     private Date value;
 
     protected static EventDate create(Submission submission, Date value) {
