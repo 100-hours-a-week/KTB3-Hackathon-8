@@ -9,6 +9,7 @@ import com.ktb.user.Repository.UserRepository;
 import com.ktb.user.domain.UserIdentifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class GroupService {
         return TempAggregation.from(aggregation);
     }
 
+    @Transactional
     public void submitMember(Long groupId, Long ownerId, String userNickname) {
         Group aggregation =
                 groupRepository.findByIdAndGroupOwner_Id(groupId, ownerId)
