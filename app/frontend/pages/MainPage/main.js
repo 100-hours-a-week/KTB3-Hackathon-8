@@ -1,20 +1,7 @@
 import { showToast } from '../../js/common/messages.js';
 import { loadHeader } from '../../layout/header/header.js';
-import { validateGroupForm, validateGroupFormSubmit, extractGroupFormData } from '../../js/common/validators.js';
+import { validateGroupForm, validateGroupFormSubmit, extractGroupFormData, loadStations, getStations } from '../../js/common/validators.js';
 import { createGroup, getGroupMembers, getGroupStatus, submitAllPicks } from '../../js/api/GenerateGroupApi.js';
-
-// 지하철 역 목록 (예시 - 실제로는 서버에서 가져오거나 더 많은 역을 포함)
-const STATIONS = [
-    '강남역', '역삼역', '선릉역', '삼성역', '종합운동장역',
-    '올림픽공원역', '방이역', '개롱역', '거여역', '마천역',
-    '잠실역', '신천역', '종합운동장역', '삼성역', '선릉역',
-    '판교역', '정자역', '미금역', '동천역', '수지구청역',
-    '성남역', '이매역', '야탑역', '모란역', '태평역',
-    '가천대역', '복정역', '산성역', '남한산성입구역', '단대오거리역',
-    '신흥역', '수진역', '모란역', '태평역', '야탑역',
-    '이매역', '서현역', '수내역', '정자역', '미금역',
-    '동천역', '삼성역', '선릉역', '역삼역', '강남역'
-];
 
 // 날짜 형식 변환 함수
 function formatDateTime(dateTimeString) {
@@ -122,9 +109,19 @@ function displayStationDropdown(stations) {
         const item = document.createElement('div');
         item.className = 'station-dropdown-item';
         item.textContent = station;
-        item.addEventListener('click', () => {
-            if (dom.stationInput) dom.stationInput.value = station;
-            dom.stationDropdown.style.display = 'none';
+        item.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // blur 이벤트가 발생하지 않도록 함
+        });
+        item.addEventListener('click', (e) => {
+            e.stopPropagation(); // 이벤트 전파 중단
+            if (dom.stationInput) {
+                dom.stationInput.value = station;
+                // input 이벤트도 트리거하여 검증 함수가 실행되도록 함
+                dom.stationInput.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            if (dom.stationDropdown) {
+                dom.stationDropdown.style.display = 'none';
+            }
             validateForm();
         });
         dom.stationDropdown.appendChild(item);
@@ -159,17 +156,26 @@ function handleDateToggle(e) {
 // 역 검색 처리
 function handleStationSearch(e) {
     const searchTerm = e.target.value.toLowerCase();
+    const inputValue = e.target.value.trim();
+    const stations = getStations();
     
     if (searchTerm.length === 0) {
         if (dom.stationDropdown) dom.stationDropdown.style.display = 'none';
     } else {
-        const filteredStations = STATIONS.filter(station => 
+        const filteredStations = stations.filter(station => 
             station.toLowerCase().includes(searchTerm)
         );
         if (filteredStations.length > 0) {
             displayStationDropdown(filteredStations);
         } else {
             if (dom.stationDropdown) dom.stationDropdown.style.display = 'none';
+        }
+        
+        // 입력값이 유효한 역 목록에 있는지 확인
+        // 완전히 일치하는 역이 없으면 입력값을 초기화
+        if (inputValue && !stations.includes(inputValue)) {
+            // 드롭다운이 열려있지 않으면 입력값이 유효하지 않음
+            // 하지만 사용자가 입력 중일 수 있으므로 검증만 수행
         }
     }
     validateForm();
@@ -222,7 +228,12 @@ async function handleFormSubmit(e) {
             showToast('그룹이 생성되었습니다!');
             updateSubmissionStatus(0, parseInt(memberCount));
 
-            if (dom.groupCreateBtn) dom.groupCreateBtn.style.display = 'none';
+            // 그룹 생성 후 UI 업데이트
+            const emptyState = document.getElementById('emptyState');
+            const actionButtons = document.getElementById('actionButtons');
+            if (emptyState) emptyState.style.display = 'none';
+            if (actionButtons) actionButtons.style.display = 'block';
+            
             startStatusPolling();
         } else {
             const errorData = await response.json().catch(() => ({}));
@@ -255,17 +266,7 @@ async function handleCopyUrl() {
     }
 }
 
-// 제출 현황 클릭 처리
-function handleStatusClick() {
-    if (!dom.submissionList) return;
-    
-    if (dom.submissionList.style.display === 'none') {
-        loadSubmissionMembers();
-        dom.submissionList.style.display = 'block';
-    } else {
-        dom.submissionList.style.display = 'none';
-    }
-}
+// 제출 현황 클릭 처리 (더 이상 필요 없음 - 멤버 리스트는 항상 표시)
 
 // 나의 회식픽 버튼 클릭
 function handleMyPickClick() {
@@ -311,7 +312,11 @@ function updateSubmissionStatus(submitted, total) {
     if (submissionCountEl) submissionCountEl.textContent = submitted;
     if (totalMembersEl) totalMembersEl.textContent = total;
 
-    if (dom.submissionStatus) dom.submissionStatus.style.display = 'block';
+    if (dom.submissionStatus) {
+        dom.submissionStatus.style.display = 'block';
+        // 제출 현황이 표시되면 자동으로 멤버 목록 로드
+        loadSubmissionMembers();
+    }
 
     if (submitted === total && total > 0) {
         if (dom.alertMessage) dom.alertMessage.style.display = 'block';
@@ -393,15 +398,48 @@ function setupEventListeners() {
     // 역 검색
     if (dom.stationInput) {
         dom.stationInput.addEventListener('input', handleStationSearch);
+        // blur 이벤트: 포커스를 잃을 때 유효한 역인지 확인
+        // 단, 드롭다운 아이템을 클릭한 경우는 제외
+        let isClickingDropdown = false;
+        if (dom.stationDropdown) {
+            dom.stationDropdown.addEventListener('mousedown', () => {
+                isClickingDropdown = true;
+            });
+            dom.stationDropdown.addEventListener('mouseup', () => {
+                // mouseup 후에 blur가 발생하므로 약간의 지연을 둠
+                setTimeout(() => {
+                    isClickingDropdown = false;
+                }, 100);
+            });
+        }
+        
+        dom.stationInput.addEventListener('blur', (e) => {
+            // 드롭다운 아이템을 클릭하는 중이면 blur 이벤트 무시
+            if (isClickingDropdown) {
+                return;
+            }
+            
+            const inputValue = e.target.value.trim();
+            const stations = getStations();
+            // 입력값이 있고, 유효한 역 목록에 없으면 초기화
+            if (inputValue && !stations.includes(inputValue)) {
+                e.target.value = '';
+                if (dom.stationDropdown) dom.stationDropdown.style.display = 'none';
+                validateForm();
+            }
+        });
     }
 
-    // 외부 클릭 시 드롭다운 닫기
+    // 외부 클릭 시 드롭다운 닫기 (이벤트 캡처 단계에서 처리)
     document.addEventListener('click', (e) => {
-        if (dom.stationInput && dom.stationDropdown && 
-            !dom.stationInput.contains(e.target) && !dom.stationDropdown.contains(e.target)) {
-            dom.stationDropdown.style.display = 'none';
+        if (dom.stationInput && dom.stationDropdown) {
+            const clickedInside = dom.stationInput.contains(e.target) || 
+                                  dom.stationDropdown.contains(e.target);
+            if (!clickedInside && dom.stationDropdown.style.display !== 'none') {
+                dom.stationDropdown.style.display = 'none';
+            }
         }
-    });
+    }, true); // 캡처 단계에서 처리
 
     // 폼 검증 이벤트
     const memberCountInput = document.getElementById('memberCount');
@@ -426,10 +464,7 @@ function setupEventListeners() {
         dom.copyBtn.addEventListener('click', handleCopyUrl);
     }
 
-    // 제출 현황
-    if (dom.statusDisplay) {
-        dom.statusDisplay.addEventListener('click', handleStatusClick);
-    }
+    // 제출 현황 클릭 제거 (멤버 리스트는 항상 표시됨)
 
     // 알림 닫기
     if (dom.alertClose) {
@@ -448,6 +483,9 @@ function setupEventListeners() {
 window.addEventListener('DOMContentLoaded', async () => {
     const headerContainer = document.getElementById('header-container');
     await loadHeader(headerContainer);
+    
+    // 역 목록 로드
+    await loadStations();
     
     initDOM();
     setupEventListeners();

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>메인 - 그룹 생성</title>
     <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="../../layout/header/header.css">
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
     <!-- 헤더 (공통 컴포넌트) -->
@@ -35,7 +37,7 @@
                 <div class="status-display" id="statusDisplay">
                     제출 현황 : <span id="submissionCount">0</span> / <span id="totalMembers">0</span>
                 </div>
-                <div class="submission-list" id="submissionList" style="display: none;">
+                <div class="submission-list" id="submissionList" style="display: block;">
                     <div class="list-title">제출한 멤버</div>
                     <ul class="member-list" id="memberList"></ul>
                 </div>
@@ -56,15 +58,22 @@
                     <button class="alert-close" id="alertClose">×</button>
                 </div>
             </div>
+
+            <!-- 그룹 미생성 시 안내 메시지 -->
+            <div class="empty-state" id="emptyState">
+                <p class="empty-message">그룹을 생성해 회식을 잡아볼까요?</p>
+            </div>
+
+            <!-- 액션 버튼들 -->
+            <div class="action-buttons" id="actionButtons" style="display: none;">
+                <button class="action-btn action-btn-top" id="myPickBtn">나의 회식픽 →</button>
+                <div class="action-btn-row">
+                    <button class="action-btn" id="submitAllBtn">전체 회식픽 제출</button>
+                    <button class="action-btn" id="viewResultBtn" disabled>결과보기</button>
+                </div>
+            </div>
         </div>
     </main>
-
-    <!-- 푸터 네비게이션 -->
-    <footer class="main-footer">
-        <button class="footer-btn" id="myPickBtn">나의 회식픽 -></button>
-        <button class="footer-btn" id="submitAllBtn">전체 회식픽 제출</button>
-        <button class="footer-btn" id="viewResultBtn" disabled>결과보기</button>
-    </footer>
 
     <!-- 그룹 생성 모달 -->
     <div class="modal-overlay" id="modalOverlay">
@@ -99,9 +108,9 @@
                     </div>
                     <div class="date-area" id="dateArea" style="display: none;">
                         <div class="date-input-group">
-                            <input type="datetime-local" class="form-input date-input" id="dateStart" required>
+                            <input type="datetime-local" class="form-input date-input" id="dateStart">
                             <span class="input-separator">~</span>
-                            <input type="datetime-local" class="form-input date-input" id="dateEnd" required>
+                            <input type="datetime-local" class="form-input date-input" id="dateEnd">
                         </div>
                     </div>
                 </div>
@@ -111,7 +120,7 @@
                     <div class="station-select-wrapper">
                         <input type="text" class="form-input station-input" id="stationInput" placeholder="역 검색" required>
                         <div class="station-dropdown" id="stationDropdown" style="display: none;"></div>
-                        <span class="input-unit">역</span>
+                        <span class="input-unit"></span>
                     </div>
                 </div>
 

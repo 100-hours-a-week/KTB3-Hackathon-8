@@ -16,6 +16,27 @@ export async function loadHeader(container) {
             const header = tempDiv.firstElementChild;
             document.body.insertBefore(header, document.body.firstChild);
         }
+        
+        // 이미지 경로 동적 설정 (현재 페이지 기준)
+        const profileImage = container 
+            ? container.querySelector('.profile-image')
+            : document.querySelector('.profile-image');
+        
+        if (profileImage) {
+            // 현재 페이지의 위치를 기준으로 assets 경로 계산
+            const currentPath = window.location.pathname;
+            let assetsPath = '../../assets/profile.jpeg'; // 기본 경로
+            
+            if (currentPath.includes('/pages/')) {
+                // pages 폴더 내에서 사용: ../../assets/profile.jpeg
+                assetsPath = '../../assets/profile.jpeg';
+            } else if (currentPath.includes('/frontend/')) {
+                // frontend 루트에서 사용: ./assets/profile.jpeg
+                assetsPath = './assets/profile.jpeg';
+            }
+            
+            profileImage.src = assetsPath;
+        }
     } catch (error) {
         console.error('Error loading header:', error);
     }

@@ -7,8 +7,10 @@
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    position: relative;
+    min-height: 40px; /* 프로필 아이콘 높이와 동일 */
 }
 
 .header-title {
@@ -27,6 +29,8 @@
     justify-content: center;
     border-radius: 50%;
     overflow: hidden;
+    position: absolute;
+    right: 1px;
 }
 
 .profile-image {
