@@ -1,0 +1,26 @@
+.form-group > input {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 300px;
+    box-sizing: border-box;
+}
+
+.auth-button {
+    background-color: var(--red-active);
+    color: white;
+    border: none;
+    padding: 8px 32px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 300px;
+    margin: 0 auto;
+    transition: background-color 0.3s;
+}
+
+.auth-button:disabled {
+    background-color: var(--red-disabled);
+}
