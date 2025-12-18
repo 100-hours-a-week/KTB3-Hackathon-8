@@ -63,9 +63,9 @@ jobs:
         
       - name: Deploy to EC2 via Docker Compose
         run: | 
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "sudo -E bash -s" << 'EOF'
-            export DOCKER_USERNAME="${DOCKER_USERNAME}"
-            export IMAGE_TAG="${IMAGE_TAG}"
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "DOCKER_USERNAME='${DOCKER_USERNAME}' IMAGE_TAG='${IMAGE_TAG}' sudo -E bash -s" << 'EOF'
+            echo "DOCKER_USERNAME=$DOCKER_USERNAME"
+            echo "IMAGE_TAG=$IMAGE_TAG"
             cd /home/${{ secrets.SERVER_USER }}
             docker compose pull
             docker compose up -d
