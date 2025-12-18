@@ -344,6 +344,23 @@
     margin: 16px;
 }
 
+/* 로그인 필요 팝업 스타일 */
+.login-modal-content {
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-modal-body {
+    padding: 20px 0;
+}
+
+.login-modal-message {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
 @media (max-width: 768px) {
     .modal-content {
         padding: 24px 16px;

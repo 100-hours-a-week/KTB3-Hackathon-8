@@ -39,7 +39,9 @@ const dom = {
     myPickBtn: null,
     submitAllBtn: null,
     viewResultBtn: null,
-    submitBtn: null
+    submitBtn: null,
+    loginRequiredModal: null,
+    loginConfirmBtn: null
 };
 
 // DOM 요소 초기화
@@ -65,6 +67,8 @@ function initDOM() {
     dom.submitAllBtn = document.getElementById('submitAllBtn');
     dom.viewResultBtn = document.getElementById('viewResultBtn');
     dom.submitBtn = document.getElementById('submitBtn');
+    dom.loginRequiredModal = document.getElementById('loginRequiredModal');
+    dom.loginConfirmBtn = document.getElementById('loginConfirmBtn');
 }
 
 // 모달 관리
@@ -477,6 +481,48 @@ function setupEventListeners() {
     if (dom.myPickBtn) dom.myPickBtn.addEventListener('click', handleMyPickClick);
     if (dom.submitAllBtn) dom.submitAllBtn.addEventListener('click', handleSubmitAllClick);
     if (dom.viewResultBtn) dom.viewResultBtn.addEventListener('click', handleViewResultClick);
+    
+    // 로그인 확인 버튼
+    if (dom.loginConfirmBtn) {
+        dom.loginConfirmBtn.addEventListener('click', () => {
+            window.location.href = '../../pages/LoginPage/login.html';
+        });
+    }
+}
+
+// 로그인 상태 확인 함수
+function checkLoginStatus() {
+    // 쿠키에서 JWT 토큰 확인
+    // 일반적인 JWT 토큰 쿠키 이름들을 확인
+    const cookieNames = ['accessToken', 'jwt', 'token', 'authToken'];
+    
+    for (const name of cookieNames) {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                const token = cookie.substring(name.length + 1);
+                if (token && token !== '') {
+                    return true;
+                }
+            }
+        }
+    }
+    
+    // localStorage에서도 확인 (대체 방법)
+    const token = localStorage.getItem('token') || localStorage.getItem('accessToken') || localStorage.getItem('jwt');
+    if (token && token !== '') {
+        return true;
+    }
+    
+    return false;
+}
+
+// 로그인 필요 팝업 표시
+function showLoginRequiredModal() {
+    if (dom.loginRequiredModal) {
+        dom.loginRequiredModal.style.display = 'flex';
+    }
 }
 
 // 초기화
@@ -489,5 +535,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     
     initDOM();
     setupEventListeners();
-    modal.open();
+    
+    // 로그인 상태 확인
+    const isLoggedIn = checkLoginStatus();
+    
+    if (!isLoggedIn) {
+        // 로그인하지 않은 경우 로그인 필요 팝업 표시
+        showLoginRequiredModal();
+    } else {
+        // 로그인한 경우 그룹 생성 모달 표시
+        modal.open();
+    }
 });

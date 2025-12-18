@@ -1,6 +1,6 @@
 /* 공통 헤더 스타일 */
 .main-header {
-    padding: 20px 40px;
+    padding: 20px 16px; /* 좌우 패딩을 40px에서 16px로 줄임 */
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
