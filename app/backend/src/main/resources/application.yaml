@@ -5,3 +5,143 @@ jwt:
   public-key-path: classpath:keys/jwtRS256.key.pub
   access-expire: 60m     # 1시간
   refresh-expire: 7d        # 7일
+
+security:
+  # permitAll: 인증 여부 무관하게 모든 사용자 접근 가능
+  permit-all-endpoints:
+    # 기본 페이지
+    - /
+    # CSRF 토큰 엔드포인트
+    - /api/v1/csrf
+    # 정적 리소스
+    - /swagger-ui/**
+    - /api-docs/**
+    - /css/**
+    - /js/**
+    - /images/**
+    - /fragments/**
+    - /fonts/**
+    - /favicon.ico
+
+  # anonymous: 미인증 사용자만 접근 가능 (로그인하면 접근 불가)
+  anonymous-only-endpoints:
+    # 로그인/회원가입 페이지
+    - /user/login
+    - /user/signup
+    - /pages/user/login.html
+    - /pages/user/signup.html
+    # 인증 API
+    - /api/v1/auth/login
+    - /api/v1/users/signup
+    - /api/v1/users/exist/**
+
+# 환경별 설정
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:h2:mem:devdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+    h2:
+      console:
+        enabled: true
+        path: /h2-console
+
+    jpa:
+      hibernate:
+        ddl-auto: create-drop
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.H2Dialect
+
+  logging:
+    level:
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+      org.hibernate.orm.jdbc.bind: TRACE
+      org.springframework.security: TRACE
+      org.springframework.security.web.csrf: TRACE
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+
+security:
+  permit-all-endpoints:
+    - /
+    - /api/v1/csrf
+    - /css/**
+    - /js/**
+    - /images/**
+    - /fragments/**
+    - /fonts/**
+    - /favicon.ico
+    - /swagger-ui/**
+    - /api-docs/**
+    - /actuator/**          # 개발 환경에서만 actuator 전체 공개
+    - /h2-console/**        # H2 콘솔
+
+  anonymous-only-endpoints:
+    - /user/login
+    - /user/signup
+    - /pages/user/login.html
+    - /pages/user/signup.html
+    - /api/v1/auth/login
+    - /api/v1/users/signup
+    - /api/v1/users/exist/**
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url:
+    driver-class-name:
+    username:
+    password:
+
+    jpa:
+      hibernate:
+        ddl-auto: update
+      properties:
+        hibernate:
+          dialect:
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+
+security:
+  permit-all-endpoints:
+    - /
+    - /api/v1/csrf
+    - /css/**
+    - /js/**
+    - /images/**
+    - /fragments/**
+    - /fonts/**
+    - /favicon.ico
+    - /actuator/health
+
+  anonymous-only-endpoints:
+    - /user/login
+    - /user/signup
+    - /api/v1/auth/login
+    - /api/v1/users/signup
+    - /api/v1/users/exist/**

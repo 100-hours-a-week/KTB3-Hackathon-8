@@ -34,6 +34,7 @@ import java.util.List;
 public class SecurityConfig {
     private final CustomUserDetailService customUserDetailService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final SecurityProperties securityProperties;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -57,6 +58,22 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 );
+
+        // SecurityProperties 패턴 가져와서 설정
+        http
+                .authorizeHttpRequests(auth -> {
+                    // permitAll: 모든 사용자 접근 가능
+                    auth.requestMatchers(securityProperties.getPermitAllPatterns())
+                            .permitAll();
+
+                    // anonymous: 미인증 사용자만 접근 가능
+                    auth.requestMatchers(securityProperties.getAnonymousOnlyPatterns())
+                            .anonymous();
+
+                    // 나머지는 인증 필요
+                    auth.anyRequest()
+                            .authenticated();
+                });
 
         // Filter 등록
         http

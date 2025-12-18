@@ -1,6 +1,7 @@
 package com.ktb.auth.filter;
 
 import com.ktb.auth.adapter.SecurityUserAccount;
+import com.ktb.auth.config.SecurityProperties;
 import com.ktb.auth.service.CustomUserDetailService;
 import com.ktb.auth.util.JwtTokenProvider;
 import com.ktb.group.exception.AuthenticationException;
@@ -23,6 +24,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final CustomUserDetailService userDetailsService;
     private final JwtTokenProvider jwtProvider;
+    private final SecurityProperties securityProperties;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -65,5 +67,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        // public 경로 (permitAll + anonymous)는 JWT 필터를 거치지 않음
+        boolean isPublic = securityProperties.isPublicEndpoint(request);
+
+        if (isPublic && log.isDebugEnabled()) {
+            String type = securityProperties.isPermitAllEndpoint(request)
+                    ? "permitAll"
+                    : "anonymous";
+            log.debug("Skipping JWT filter for {} endpoint: {}",
+                    type, request.getRequestURI());
+        }
+
+        return isPublic;
     }
 }
