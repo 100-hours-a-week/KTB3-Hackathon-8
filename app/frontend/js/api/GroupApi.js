@@ -1,3 +1,5 @@
+import { API_BASE } from '../../config.js';
+import { fetchAPIWithBody, fetchAPI } from './api_fetcher.js';
 /**
  * 그룹 관련 API 호출 함수들
  */
@@ -9,5 +11,5 @@ import { fetchAPIWithBody, fetchAPI } from './api_fetcher.js';
  * @returns {Promise<Response>}
  */
 export async function createGroup(formData) {
-    return await fetchAPIWithBody('/group', 'POST', JSON.stringify(formData));
+    return await fetchAPIWithBody(`${API_BASE}/group`, 'POST', JSON.stringify(formData));
 }
