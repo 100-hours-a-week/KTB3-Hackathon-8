@@ -1,10 +1,9 @@
 import { showToast } from '../../js/common/messages.js';
 import { loadHeader } from '../../layout/header/header.js';
 import { validateGroupForm, validateGroupFormSubmit, extractGroupFormData, loadStations, getStations } from '../../js/common/validators.js';
-import { createGroup, getGroupStatus } from '../../js/api/GenerateGroupApi.js';
+import { createGroup, getGroupSettings, getGroupSubmitStatus } from '../../js/api/GroupApi.js';
 import { submitAggregation } from '../../js/api/SubmissionAPI.js';
 import { getGroupIdFromSession } from '../../js/common/sessionManagers.js';
-import { getGroupSubmitStatus } from '../../js/api/GroupApi.js';
 
 // 날짜 형식 변환 함수
 function formatDateTime(dateTimeString) {
@@ -323,21 +322,10 @@ function handleViewResultClick() {
 }
 
 // 제출 현황 업데이트
-async function updateSubmissionStatus(submitted, total) {
-
-    const submissionStatusResponse = await getGroupSubmitStatus(groupId, ownerId);
-    let submitted;
-    let total;
-    let submissionList;
-    if (submissionStatusResponse.ok) {
-        const statusData = await submissionStatusResponse.json();
-        submitted = statusData.submit_count || 0;
-        total = statusData.total_user_count || 0;
-        submissionList = statusData.user_nickname_list || [];
-    }
+async function updateSubmissionStatus(submitted, total, members = []) {
     submissionData.submitted = submitted;
     submissionData.total = total;
-    submissionData.members = submissionList;
+    submissionData.members = members;
 
     const submissionCountEl = document.getElementById('submissionCount');
     const totalMembersEl = document.getElementById('totalMembers');
@@ -371,6 +359,31 @@ function displayMemberList(members) {
     });
 }
 
+// 제출 현황 업데이트 (TempAggregation 사용)
+async function updateSubmissionStatusFromAggregation() {
+    if (!groupData?.id) {
+        console.warn('groupId가 없습니다.');
+        return;
+    }
+    
+    try {
+        const response = await getGroupSubmitStatus(groupData.id);
+        
+        if (response.ok) {
+            const data = await response.json();
+            const submitted = data.submit_count || 0;
+            const total = data.total_user_count || 0;
+            const members = data.user_nickname_list || [];
+            
+            await updateSubmissionStatus(submitted, total, members);
+        } else {
+            console.error('Failed to fetch aggregation:', response.status);
+        }
+    } catch (error) {
+        console.error('Error fetching aggregation:', error);
+    }
+}
+
 // 상태 폴링
 let statusPollingInterval = null;
 
@@ -385,16 +398,8 @@ function startStatusPolling() {
             return;
         }
         
-        try {
-            const response = await getGroupStatus(groupData.id);
-
-            if (response.ok) {
-                const data = await response.json();
-                updateSubmissionStatus(data.submitted || 0, data.total || 0);
-            }
-        } catch (error) {
-            console.error('Error fetching status:', error);
-        }
+        // TempAggregation을 사용하여 제출 현황 업데이트
+        await updateSubmissionStatusFromAggregation();
     }, 5000);
 }
 

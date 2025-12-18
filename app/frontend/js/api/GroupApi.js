@@ -31,9 +31,9 @@ export async function getGroupSettings(groupId) {
 /**
  * 그룹 집계 조회 
  */
-export async function getGroupSubmitStatus(groupId, ownerId) {
+export async function getGroupSubmitStatus(groupId) {
     return await fetchAPI(
-        `${API_BASE}/group/${groupId}/${ownerId}/aggregation`,
+        `${API_BASE}/group/${groupId}/aggregation`,
         'GET'
     );
 }
