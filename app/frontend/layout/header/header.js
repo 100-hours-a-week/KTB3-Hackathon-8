@@ -1,3 +1,5 @@
+import { initializeUserDropdown } from '../../js/common/userDropdown.js';
+
 /**
  * 헤더 컴포넌트 로드 함수
  * @param {HTMLElement} container - 헤더를 삽입할 컨테이너 요소
@@ -37,6 +39,9 @@ export async function loadHeader(container) {
             
             profileImage.src = assetsPath;
         }
+        
+        // 드롭다운 메뉴 초기화
+        initializeUserDropdown(container);
     } catch (error) {
         console.error('Error loading header:', error);
     }

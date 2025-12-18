@@ -4,8 +4,15 @@
             <img src="../../assets/arrow-left-solid-full.svg" alt="뒤로가기버튼" class="back-button-image">
         </div>
         <h1 class="header-title">부장님 여기요</h1>
-        <div class="user-icon">
-            <img src="../../assets/profile.jpeg" alt="프로필" class="profile-image">
+        <div class="user-icon-wrapper">
+            <div class="user-icon" id="userIcon">
+                <img src="../../assets/profile.jpeg" alt="프로필" class="profile-image">
+            </div>
+            <div class="user-dropdown" id="userDropdown" style="display: none;">
+                <div class="dropdown-item" id="loginItem">로그인</div>
+                <div class="dropdown-item" id="signupItem">회원가입</div>
+                <div class="dropdown-item" id="logoutItem" style="display: none;">로그아웃</div>
+            </div>
         </div>
     </div>
 </header>
