@@ -1,3 +1,50 @@
+
+/**
+ * 회원가입, 로그인 폼 유효성 검사 함수들
+ */
+
+/**
+ * 폼 데이터에서 닉네임 유효성 검사
+ * @param {string} nickname - 닉네임
+ * @returns {boolean} - 유효 여부
+ * 
+ * nickname: 10자 이내 입력 (+ 공백 금지)
+ */
+export function isInvalidNickname(nickname) {
+  return (
+    nickname.length === 0 ||
+    nickname.length > 10 ||
+    /\s/.test(nickname)
+  );
+}
+
+/**
+ * 폼 데이터에서 아이디 유효성 검사
+ * @param {string} id - 아이디
+ * @returns {boolean} - 유효 여부
+ * 
+ * id: 영문/숫자 포함 8자 이상 (영문+숫자만 허용, 둘 다 반드시 포함)
+ */
+export function isInvalidId(id) {
+  return (
+    id.length < 8 ||
+    !/^[A-Za-z0-9]+$/.test(id) || // 영문/숫자만
+    !/[A-Za-z]/.test(id) ||       // 영문 포함
+    !/[0-9]/.test(id)             // 숫자 포함
+  );
+}
+
+/**
+ * 폼 데이터에서 패스워드 유효성 검사
+ * @param {string} password - 패스워드
+ * @returns {boolean} - 유효 여부
+ * 
+ * password: 숫자 4자리
+ */
+export function isInvalidPassword(password) {
+  return !/^\d{4}$/.test(password);
+}
+
 /**
  * 그룹 생성 폼 유효성 검사 함수들
  */
@@ -135,4 +182,3 @@ export function extractGroupFormData(formElement) {
         dateEnd
     };
 }
-
