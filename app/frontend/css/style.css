@@ -15,6 +15,7 @@
 /* Pages */
 @import "../pages/MainPage/main.css";
 @import "../pages/LoginPage/login.css";
+@import "../pages/SubmitFormPage/submitForm.css";
 /* @import "pages/main.css"; */
 /* @import "pages/auth.css";
 @import "pages/password_update.css";
