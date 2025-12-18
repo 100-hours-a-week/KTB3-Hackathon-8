@@ -1,7 +1,9 @@
 import { showToast } from '../../js/common/messages.js';
 import { loadHeader } from '../../layout/header/header.js';
 import { validateGroupForm, validateGroupFormSubmit, extractGroupFormData, loadStations, getStations } from '../../js/common/validators.js';
-import { createGroup, getGroupMembers, getGroupStatus, submitAllPicks } from '../../js/api/GenerateGroupApi.js';
+import { createGroup, getGroupMembers, getGroupStatus } from '../../js/api/GenerateGroupApi.js';
+import { submitAggregation } from '../../js/api/SubmissionAPI.js';
+import { getGroupIdFromSession } from '../../js/common/sessionManagers.js';
 
 // 날짜 형식 변환 함수
 function formatDateTime(dateTimeString) {
@@ -289,7 +291,8 @@ function handleMyPickClick() {
 // 전체 회식픽 제출 버튼 클릭
 async function handleSubmitAllClick() {
     try {
-        const response = await submitAllPicks(groupData?.id);
+        const groupId = getGroupIdFromSession();
+        const response = await submitAggregation(groupId);
 
         if (response.ok) {
             showToast('전체 회식픽이 제출되었습니다.');
