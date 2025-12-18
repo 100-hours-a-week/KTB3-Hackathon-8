@@ -1,6 +1,7 @@
 package com.ktb.group.service;
 
 import com.ktb.group.domain.Group;
+import com.ktb.group.dto.GroupFinalMeta;
 import com.ktb.group.dto.TempAggregation;
 import com.ktb.group.exception.NonExistGroupException;
 import com.ktb.group.repository.GroupRepository;
@@ -35,5 +36,15 @@ public class GroupService {
 
     public String buildGroupInviteUrl(String baseUrl, Long groupId, Long ownerId) {
         return String.format("%s/group/%d/%d", baseUrl, groupId, ownerId);
+    }
+
+    public GroupFinalMeta getGroupCompletionMeta(Long groupId, Long ownerId) {
+        Group group =
+                groupRepository.findByIdAndGroupOwner_Id(groupId, ownerId)
+                        .orElseThrow(NonExistGroupException::new);
+
+        group.validateAllSubmitted();
+
+        return GroupFinalMeta.from(group);
     }
 }
