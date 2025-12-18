@@ -25,6 +25,9 @@ spring:
       max-request-size: 10MB
   jpa:
     open-in-view: false
+  sql:
+    init:
+      mode: never  # Hibernate가 DDL 자동 생성 (dev는 이 설정 사용)
 
 security:
   # permitAll: 인증 여부 무관하게 모든 사용자 접근 가능
@@ -76,19 +79,16 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
-
-    h2:
-      console:
-        enabled: true
-        path: /h2-console
-
-    jpa:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
       hibernate:
-        ddl-auto: create-drop
-      properties:
-        hibernate:
-          dialect: org.hibernate.dialect.H2Dialect
-
+        dialect: org.hibernate.dialect.H2Dialect
   logging:
     level:
       org.hibernate.SQL: DEBUG
@@ -161,6 +161,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: false
+  sql:
+    init:
+      mode: ${SQL_INIT_MODE:never}  # "always"로 설정 시 schema-postgresql.sql 실행
+      schema-locations: classpath:schema-postgresql.sql
 
 springdoc:
   api-docs:
