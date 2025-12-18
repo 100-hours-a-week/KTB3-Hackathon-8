@@ -4,7 +4,7 @@ import { submitSingle } from '../../js/api/SubmissionAPI.js';
 import { getGroupSettings } from '../../js/api/GroupApi.js';
 import { showToast } from '../../js/common/messages.js';
 import { getGroupIdFromSession, getIsLoggedInFromSession } from '../../js/common/sessionManagers.js';
-import { getNickname } from '../../js/api/UserApi.js';
+import { getNickname } from '../../js/api/AuthApi.js';
 
 
 
