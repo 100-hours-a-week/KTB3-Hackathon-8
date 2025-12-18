@@ -4,7 +4,7 @@
  */
 export async function loadHeader(container) {
     try {
-        const response = await fetch('../../layout/header.html');
+        const response = await fetch('../../layout/header-with-back-button/header.html');
         const html = await response.text();
         
         if (container) {
