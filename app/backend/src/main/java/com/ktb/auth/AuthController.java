@@ -2,11 +2,9 @@ package com.ktb.auth;
 
 import com.ktb.auth.adapter.SecurityUserAccount;
 import com.ktb.auth.constant.MessageConstant;
-import com.ktb.auth.dto.CommonResponse;
+import com.ktb.user.dto.CommonResponse;
 import com.ktb.auth.dto.LoginRequest;
 import com.ktb.auth.util.JwtTokenProvider;
-import com.ktb.user.dto.UserDto;
-import com.ktb.auth.constant.MessageConstant;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
