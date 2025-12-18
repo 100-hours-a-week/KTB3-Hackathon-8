@@ -2,6 +2,7 @@ package com.ktb.group.controller;
 
 import com.ktb.group.dto.TempAggregation;
 import com.ktb.group.dto.request.CreateGroupRequest;
+import com.ktb.group.dto.response.CreateGroupIdResponse;
 import com.ktb.group.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,12 +37,14 @@ public class GroupController {
             @ApiResponse(responseCode = "200", description = "그룹 생성 성공"),
     })
     @PostMapping()
-    public ResponseEntity<Void> createGroup(
+    public ResponseEntity<CreateGroupIdResponse> createGroup(
             @RequestBody CreateGroupRequest groupRequest
     ) {
-        groupService.createGroup(groupRequest);
+        Long createdId = groupService.createGroup(groupRequest);
 
-        return ResponseEntity.ok().build();
+        CreateGroupIdResponse response = new CreateGroupIdResponse(createdId);
+
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "그룹 집계 조회", description = "그룹의 제출 현황을 조회합니다")
