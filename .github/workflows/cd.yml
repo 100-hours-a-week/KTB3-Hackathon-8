@@ -71,7 +71,7 @@ jobs:
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "DOCKER_USERNAME='${DOCKER_USERNAME}' IMAGE_TAG='${IMAGE_TAG}' \
             GOOGLE_API_KEY='${GOOGLE_API_KEY}' IMAGE_OCR_SERVER_URL='${IMAGE_OCR_SERVER_URL}' \
             PRIVATE_KEY_PATH='${PRIVATE_KEY_PATH}' PUBLIC_KEY_PATH='${PUBLIC_KEY_PATH}' \
-            sudo -E bash -s" << EOF
+            sudo -n -E bash -s" << EOF
             echo "DOCKER_USERNAME=\$DOCKER_USERNAME"
             echo "IMAGE_TAG=\$IMAGE_TAG"
             cd /home/${{ secrets.SERVER_USER }}
