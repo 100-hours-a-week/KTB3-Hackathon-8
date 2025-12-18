@@ -19,6 +19,8 @@ public class GroupService {
     private GroupRepository groupRepository;
     private UserRepository userRepository;
 
+    @Transactional(readOnly = true)
+    @Lock(value = LockModeType.PESSIMISTIC_READ)
     public TempAggregation getAggregation(Long groupId, Long ownerId) {
         Group aggregation =
                 groupRepository.findByIdAndGroupOwner_Id(groupId, ownerId)
