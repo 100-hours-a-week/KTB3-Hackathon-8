@@ -1,0 +1,7 @@
+jwt:
+  access-token-name: jwt
+  refresh-token-name: refresh_token
+  private-key-path: classpath:keys/jwtRS256.key
+  public-key-path: classpath:keys/jwtRS256.key.pub
+  access-expire: 60m     # 1시간
+  refresh-expire: 7d        # 7일
