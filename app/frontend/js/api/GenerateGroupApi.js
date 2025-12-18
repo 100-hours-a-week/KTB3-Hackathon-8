@@ -10,7 +10,7 @@ import { fetchAPIWithBody, fetchAPI } from './api_fetcher.js';
  */
 export async function createGroup(formData) {
     return await fetchAPIWithBody(
-        '/api/groups/create',
+        '/api/v1/group',
         'POST',
         JSON.stringify(formData)
     );
@@ -50,6 +50,30 @@ export async function submitAllPicks(groupId) {
         `/api/groups/${groupId}/submit-all`,
         'POST',
         JSON.stringify({})
+    );
+}
+
+/**
+ * 그룹 결과 조회 (날짜 및 장소 랭킹)
+ * @param {string} groupId - 그룹 ID
+ * @returns {Promise<Response>}
+ */
+export async function getGroupResults(groupId) {
+    return await fetchAPI(
+        `/api/v1/group/${groupId}/results`,
+        'GET'
+    );
+}
+
+/**
+ * 그룹 설정값 조회 (날짜 설정 여부, 날짜 범위 등)
+ * @param {string} groupId - 그룹 ID
+ * @returns {Promise<Response>}
+ */
+export async function getGroupSettings(groupId) {
+    return await fetchAPI(
+        `/api/v1/group/${groupId}`,
+        'GET'
     );
 }
 

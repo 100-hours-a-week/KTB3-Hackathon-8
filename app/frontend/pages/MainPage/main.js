@@ -204,7 +204,7 @@ async function handleFormSubmit(e) {
         start_date: formInputData.dateToggleChecked ? formatDateTime(formInputData.dateStart) : null,
         end_date: formInputData.dateToggleChecked ? formatDateTime(formInputData.dateEnd) : null,
         station: station.replace('역', ''),
-        budget: budgetWon.toString()
+        budget: budgetWon  // 정수로 전송
     };
 
     try {
@@ -213,11 +213,19 @@ async function handleFormSubmit(e) {
         if (response.ok) {
             const data = await response.json();
             
-            groupData = data;
+            // 백엔드 응답: CreateGroupIdResponse { groupId: Long }
+            groupData = { id: data.groupId };
             submissionData.total = parseInt(memberCount);
 
-            if (data.url && dom.urlValue) {
-                dom.urlValue.textContent = data.url;
+            // 클라이언트에서 URL 생성 (절대 경로 사용)
+            if (data.groupId && dom.urlValue) {
+                // 프로젝트 구조를 고려하여 절대 URL 생성
+                // /pages/MainPage/main.html -> /pages/SubmitFormPage/submitForm.html
+                const currentPath = window.location.pathname;
+                // /pages/ 디렉토리 내의 모든 페이지에서 /pages/SubmitFormPage/submitForm.html로 변환
+                const submitFormPath = currentPath.replace(/\/pages\/[^/]+\/[^/]+\.html$/, '/pages/SubmitFormPage/submitForm.html');
+                const submitFormUrl = `${window.location.origin}${submitFormPath}?groupId=${data.groupId}`;
+                dom.urlValue.textContent = submitFormUrl;
                 if (dom.urlSection) dom.urlSection.style.display = 'block';
             }
 
@@ -267,10 +275,14 @@ async function handleCopyUrl() {
 
 // 나의 회식픽 버튼 클릭
 function handleMyPickClick() {
-    if (groupData?.url) {
-        window.location.href = groupData.url;
+    if (groupData?.id) {
+        // 절대 경로 사용
+        const currentPath = window.location.pathname;
+        const submitFormPath = currentPath.replace(/\/pages\/[^/]+\/[^/]+\.html$/, '/pages/SubmitFormPage/submitForm.html');
+        const submitFormUrl = `${window.location.origin}${submitFormPath}?groupId=${groupData.id}`;
+        window.location.href = submitFormUrl;
     } else {
-        showToast('그룹 URL이 없습니다.');
+        showToast('그룹 정보가 없습니다.');
     }
 }
 
@@ -295,7 +307,15 @@ async function handleSubmitAllClick() {
 
 // 결과보기 버튼 클릭
 function handleViewResultClick() {
-    window.location.href = '/pages/ResultPage/result.html';
+    if (groupData?.id) {
+        // 절대 경로 사용
+        const currentPath = window.location.pathname;
+        const resultPagePath = currentPath.replace(/\/pages\/[^/]+\/[^/]+\.html$/, '/pages/ResultPage/resultPage.html');
+        const resultPageUrl = `${window.location.origin}${resultPagePath}?groupId=${groupData.id}`;
+        window.location.href = resultPageUrl;
+    } else {
+        showToast('그룹 정보를 찾을 수 없습니다.');
+    }
 }
 
 // 제출 현황 업데이트

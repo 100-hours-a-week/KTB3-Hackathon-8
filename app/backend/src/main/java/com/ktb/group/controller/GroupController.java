@@ -61,9 +61,11 @@ public class GroupController {
             @Parameter(description = "그룹 ID", required = true) @PathVariable Long groupId,
             @AuthenticationPrincipal SecurityUserAccount principal
     ) {
-        Long userId = principal.getAccount().getId();
-        Long requestUserId = (userId == null) ? 0L : userId;
-        GroupMeta metaInfo = groupService.getGroupInfo(requestUserId,groupId);
+        Long requestUserId = 0L;
+        if (principal != null && principal.getAccount() != null) {
+            requestUserId = principal.getAccount().getId();
+        }
+        GroupMeta metaInfo = groupService.getGroupInfo(requestUserId, groupId);
 
         return ResponseEntity.ok(metaInfo);
     }

@@ -45,6 +45,8 @@ security:
     - /favicon.ico
     # Restaurant API
     - /api/v1/restaurants/**
+    # 그룹 정보 조회 (외부 사용자 접근 가능)
+    - /api/v1/group/**
 
   # anonymous: 미인증 사용자만 접근 가능 (로그인하면 접근 불가)
   anonymous-only-endpoints:
@@ -127,6 +129,7 @@ security:
     - /actuator/**          # 개발 환경에서만 actuator 전체 공개
     - /h2-console/**        # H2 콘솔
     - /api/v1/restaurants/**  # Restaurant API
+    - /api/v1/group/**        # 그룹 정보 조회 (외부 사용자 접근 가능)
 
   anonymous-only-endpoints:
     - /user/login

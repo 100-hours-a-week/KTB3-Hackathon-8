@@ -42,7 +42,7 @@ public class SubmissionController {
             @PathVariable Long groupId,
             @AuthenticationPrincipal SecurityUserAccount principal
             ) {
-        if (principal.getAccount() != null) {
+        if (principal != null && principal.getAccount() != null) {
             submission = submission.withNickname(principal.getAccount().getNickname());
         }
         submissionService.userSubmit(groupId, submission);
