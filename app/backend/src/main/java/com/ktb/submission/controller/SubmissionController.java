@@ -1,8 +1,7 @@
 package com.ktb.submission.controller;
 
 import com.ktb.auth.adapter.SecurityUserAccount;
-import com.ktb.submission.domain.Submission;
-import com.ktb.submission.dto.PromptResponseDto;
+import com.ktb.submission.dto.FinalResponseDto;
 import com.ktb.submission.dto.request.SubmitRequest;
 import com.ktb.submission.service.SubmissionService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,15 +52,15 @@ public class SubmissionController {
     @Operation(summary = "총무 통합 제출", description = "총무가 그룹의 모든 제출을 통합하여 프롬프트를 생성합니다")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "통합 제출 성공",
-                    content = @Content(schema = @Schema(implementation = PromptResponseDto.class))),
+                    content = @Content(schema = @Schema(implementation = FinalResponseDto.class))),
             @ApiResponse(responseCode = "404", description = "그룹을 찾을 수 없음"),
             @ApiResponse(responseCode = "400", description = "모든 멤버가 제출하지 않음")
     })
     @PostMapping("/total/{groupId}")
-    public ResponseEntity<PromptResponseDto> totalSubmit(
+    public ResponseEntity<FinalResponseDto> totalSubmit(
             @Parameter(description = "그룹 ID", required = true) @PathVariable Long groupId
     ) {
-        PromptResponseDto promptResponse = submissionService.totalSubmit(groupId);
+        FinalResponseDto promptResponse = submissionService.totalSubmit(groupId);
         return ResponseEntity.ok().body(promptResponse);
     }
 }
