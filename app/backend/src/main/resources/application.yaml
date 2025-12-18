@@ -88,6 +88,8 @@ security:
     - /favicon.ico
     - /swagger-ui/**
     - /api-docs/**
+    - /api/v1/group/**/invite-url
+    - /api/v1/submission/user
     - /actuator/**          # 개발 환경에서만 actuator 전체 공개
     - /h2-console/**        # H2 콘솔
 
@@ -138,6 +140,8 @@ security:
     - /fonts/**
     - /favicon.ico
     - /actuator/health
+    - /api/v1/group/**/invite-url
+    - /api/v1/submission/user
 
   anonymous-only-endpoints:
     - /user/login
