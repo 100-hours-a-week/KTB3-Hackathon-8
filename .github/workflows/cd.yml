@@ -75,23 +75,23 @@ jobs:
             echo "DOCKER_USERNAME=\$DOCKER_USERNAME"
             echo "IMAGE_TAG=\$IMAGE_TAG"
             cd /home/${{ secrets.SERVER_USER }}
-
+            
             cat > .env <<ENVEOF
             # Google Map API Key
             GOOGLE_API_KEY="\$GOOGLE_API_KEY"
-
+            
             # OCR Server URL
             IMAGE_OCR_SERVER_URL="\$IMAGE_OCR_SERVER_URL"
-
+            
             # JWT Token Path
             PRIVATE_KEY_PATH="\$PRIVATE_KEY_PATH"
             PUBLIC_KEY_PATH="\$PUBLIC_KEY_PATH"
           ENVEOF
-
+            
             set -a
             . ./.env
             set +a
-
+            
             docker compose pull
             docker compose up -d
             docker compose ps
