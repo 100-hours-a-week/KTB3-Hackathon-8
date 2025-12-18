@@ -1,6 +1,7 @@
 package com.ktb.group.controller;
 
 import com.ktb.group.dto.TempAggregation;
+import com.ktb.group.dto.request.CreateGroupRequest;
 import com.ktb.group.service.GroupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,8 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Group", description = "그룹 관리 API")
@@ -27,6 +30,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class GroupController {
     private final GroupService groupService;
+
+    @Operation(summary = "모임 그룹을 생성", description = "모임 그룹을 생성합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "그룹 생성 성공"),
+    })
+    @PostMapping()
+    public ResponseEntity<Void> createGroup(
+            @RequestBody CreateGroupRequest groupRequest
+    ) {
+        groupService.createGroup(groupRequest);
+
+        return ResponseEntity.ok().build();
+    }
 
     @Operation(summary = "그룹 집계 조회", description = "그룹의 제출 현황을 조회합니다")
     @ApiResponses({

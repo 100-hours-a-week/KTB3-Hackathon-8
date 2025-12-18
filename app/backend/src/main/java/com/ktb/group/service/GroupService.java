@@ -3,6 +3,7 @@ package com.ktb.group.service;
 import com.ktb.group.domain.Group;
 import com.ktb.group.dto.GroupFinalMeta;
 import com.ktb.group.dto.TempAggregation;
+import com.ktb.group.dto.request.CreateGroupRequest;
 import com.ktb.group.exception.NonExistGroupException;
 import com.ktb.group.repository.GroupRepository;
 import com.ktb.user.repository.UserRepository;
@@ -56,5 +57,14 @@ public class GroupService {
         group.validateAllSubmitted();
 
         return GroupFinalMeta.from(group);
+    }
+
+//    public void createGroup(Long ownerId, Integer maxCapacity, String station, Integer budget, boolean hasScheduledDate) {
+    public void createGroup(CreateGroupRequest groupRequest) {
+        UserIdentifier user = userRepository.findById(groupRequest.ownerId()).orElseThrow();
+        //Long ownerId, Integer maxCapacity, String station, Integer budget
+        Group group = Group.create(user, groupRequest.maxCapacity(), groupRequest.station(),  groupRequest.budget(), groupRequest.hasScheduledDate());
+
+        groupRepository.save(group);
     }
 }
