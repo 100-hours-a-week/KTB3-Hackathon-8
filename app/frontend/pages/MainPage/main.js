@@ -197,16 +197,14 @@ async function handleFormSubmit(e) {
         return;
     }
     
-    const { memberCount, budgetMin, budgetMax, station } = formInputData;
+    const { memberCount, budget, station } = formInputData;
 
     // 데이터 준비
-    const budgetMinWon = parseInt(budgetMin) * 10000;
-    const budgetMaxWon = parseInt(budgetMax) * 10000;
-    const budget = Math.floor((budgetMinWon + budgetMaxWon) / 2).toString();
+    const budgetWon = parseInt(budget) * 10000;
     
     const formData = {
         max_capacity: memberCount,
-        budget: budget,
+        budget: budgetWon.toString(),
         station: station.replace('역', ''),
         date_range: formInputData.dateToggleChecked ? [
             formatDateTime(formInputData.dateStart),
@@ -447,14 +445,12 @@ function setupEventListeners() {
 
     // 폼 검증 이벤트
     const memberCountInput = document.getElementById('memberCount');
-    const budgetMinInput = document.getElementById('budgetMin');
-    const budgetMaxInput = document.getElementById('budgetMax');
+    const budgetInput = document.getElementById('budget');
     const dateStartInput = document.getElementById('dateStart');
     const dateEndInput = document.getElementById('dateEnd');
     
     if (memberCountInput) memberCountInput.addEventListener('input', validateForm);
-    if (budgetMinInput) budgetMinInput.addEventListener('input', validateForm);
-    if (budgetMaxInput) budgetMaxInput.addEventListener('input', validateForm);
+    if (budgetInput) budgetInput.addEventListener('input', validateForm);
     if (dateStartInput) dateStartInput.addEventListener('input', validateForm);
     if (dateEndInput) dateEndInput.addEventListener('input', validateForm);
 

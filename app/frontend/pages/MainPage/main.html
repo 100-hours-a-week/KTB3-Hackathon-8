@@ -85,15 +85,16 @@
             <form class="group-form" id="groupForm">
                 <div class="form-group">
                     <label class="form-label required">멤버 수 :</label>
-                    <input type="number" class="form-input" id="memberCount" min="1" required>
+                    <div class="input-with-unit">
+                        <input type="number" class="form-input" id="memberCount" min="1" required>
+                        <span class="input-unit">명</span>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label required">예산 :</label>
-                    <div class="budget-input-group">
-                        <input type="number" class="form-input budget-input" id="budgetMin" min="0" required>
-                        <span class="input-separator">~</span>
-                        <input type="number" class="form-input budget-input" id="budgetMax" min="0" required>
+                    <div class="input-with-unit">
+                        <input type="number" class="form-input" id="budget" min="0" required>
                         <span class="input-unit">만원</span>
                     </div>
                 </div>
