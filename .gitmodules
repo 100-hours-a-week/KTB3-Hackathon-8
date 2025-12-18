@@ -1,0 +1,6 @@
+[submodule "app/ktb_hack_img"]
+	path = app/ktb_hack_img
+	url = https://github.com/kim-min-min/ktb_hack_img.git
+[submodule "app/ktb_hack_llm"]
+	path = app/ktb_hack_llm
+	url = https://github.com/kim-min-min/ktb_hack_llm.git
