@@ -3,6 +3,13 @@ package com.ktb.submission.controller;
 import com.ktb.submission.domain.Submission;
 import com.ktb.submission.dto.PromptResponseDto;
 import com.ktb.submission.service.SubmissionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,27 +18,42 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Submission", description = "제출 관리 API")
 @RestController
 @RequestMapping("/api/v1/submission")
 @RequiredArgsConstructor
 public class SubmissionController {
     private final SubmissionService submissionService;
 
-    //맴버 개별 제출
+    @Operation(summary = "멤버 개별 제출", description = "그룹 멤버가 개별적으로 메뉴를 제출합니다")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "제출 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "404", description = "그룹 또는 사용자를 찾을 수 없음")
+    })
     @PostMapping("/user")
-    public ResponseEntity<Void> userSubmit(@RequestBody Submission submission) {
-
+    public ResponseEntity<Void> userSubmit(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "제출 정보", required = true,
+                    content = @Content(schema = @Schema(implementation = Submission.class)))
+            @RequestBody Submission submission
+    ) {
         submissionService.userSubmit(submission);
-
         return ResponseEntity.ok().build();
     }
 
-    //총무 통합 제출
+    @Operation(summary = "총무 통합 제출", description = "총무가 그룹의 모든 제출을 통합하여 프롬프트를 생성합니다")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "통합 제출 성공",
+                    content = @Content(schema = @Schema(implementation = PromptResponseDto.class))),
+            @ApiResponse(responseCode = "404", description = "그룹을 찾을 수 없음"),
+            @ApiResponse(responseCode = "400", description = "모든 멤버가 제출하지 않음")
+    })
     @PostMapping("/total/{groupId}")
-    public ResponseEntity<PromptResponseDto> totalSubmit(@PathVariable Long groupId) {
-
+    public ResponseEntity<PromptResponseDto> totalSubmit(
+            @Parameter(description = "그룹 ID", required = true) @PathVariable Long groupId
+    ) {
         PromptResponseDto promptResponse = submissionService.totalSubmit(groupId);
-
         return ResponseEntity.ok().body(promptResponse);
     }
 }
