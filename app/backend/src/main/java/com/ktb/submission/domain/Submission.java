@@ -2,10 +2,19 @@ package com.ktb.submission.domain;
 
 import com.ktb.group.domain.Group;
 import jakarta.persistence.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Submission {
     @Id
     @GeneratedValue(
@@ -24,9 +33,41 @@ public class Submission {
 
     private String nickname;
 
-    private String likedFoods;
+    @Column(name = "preferred_foods")
+    private String preferredFoods;
 
-    private String disLikedFoods;
+    @Column(name = "avoided_foods")
+    private String avoidedFoods;
 
-    private String forbiddenFoods;
+    @Column(name = "excluded_foods")
+    private String excludedFoods;
+
+    @OneToMany(mappedBy = "submission", fetch = FetchType.LAZY)
+    private List<EventDate> excludedDates;
+
+    public static Submission create(
+            Group group,
+            String nickname,
+            String preferredFoods,
+            String avoidedFoods,
+            String excludedFoods,
+            List<Date> excludedDates
+    ) {
+        Submission submission = new Submission(null, group, nickname, preferredFoods, avoidedFoods, excludedFoods, Collections.EMPTY_LIST);
+
+        submission.createEventDate(excludedDates);
+
+        return submission;
+    }
+
+    private void createEventDate(List<Date> excludedDates) {
+        excludedDates.forEach(date -> {
+            addDate(this, date);
+        });
+    }
+
+    private static void addDate(Submission submission, Date value) {
+        EventDate eventDate = EventDate.create(submission, value);
+        submission.excludedDates.add(eventDate);
+    }
 }

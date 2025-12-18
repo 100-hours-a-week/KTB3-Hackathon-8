@@ -1,34 +1,39 @@
 package com.ktb.submission.service;
 
+import com.ktb.group.domain.Group;
+import com.ktb.group.repository.GroupRepository;
 import com.ktb.submission.domain.Submission;
 import com.ktb.submission.dto.PromptRequestDto;
 import com.ktb.submission.dto.PromptResponseDto;
 import com.ktb.submission.dto.TotalUserSubmission;
+import com.ktb.submission.dto.request.SubmitRequest;
+import com.ktb.submission.exception.AlreadySubmittedUserException;
 import com.ktb.submission.repository.SubmissionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubmissionService {
-    SubmissionRepository submissionRepository;
+    private final SubmissionRepository submissionRepository;
+    private final GroupRepository groupRepository;
 
-    public Submission userSubmit(Submission submission) {
+    private final static String ALREADY_SUBMITTED = "이미 제출한 사용자입니다.";
 
-        Optional<Submission> existingSubmission =
-                submissionRepository.findByNickname(submission.getNickname());
+    public void userSubmit(Long groupId, SubmitRequest submission) {
+        Group group = groupRepository.findById(groupId).orElseThrow();
 
-        if (existingSubmission.isPresent()) {
-            log.warn("이미 제출한 사용자입니다.");
-            throw new IllegalStateException("이미 제출한 사용자입니다.");
-        }
+        submissionRepository.findByNickname(submission.nickname())
+                .ifPresent(existSubmission -> {
+                    log.info(ALREADY_SUBMITTED);
+                    throw new AlreadySubmittedUserException(ALREADY_SUBMITTED);
+                });
 
-        return submissionRepository.save(submission);
+        submissionRepository.save(submission.toEntity(group));
     }
 
     public PromptResponseDto totalSubmit(Long groupId){
@@ -38,11 +43,11 @@ public class SubmissionService {
         TotalUserSubmission total = new TotalUserSubmission();
 
         List<String> likeFoodList = Submissions.stream()
-                .map(Submission::getLikedFoods).toList();
+                .map(Submission::getPreferredFoods).toList();
         List<String> disLikedFoodList = Submissions.stream()
-                .map(Submission::getDisLikedFoods).toList();
+                .map(Submission::getAvoidedFoods).toList();
         List<String> forbiddenFoodList = Submissions.stream()
-                .map(Submission::getForbiddenFoods).toList();
+                .map(Submission::getExcludedFoods).toList();
 
         total.getLikedFoodsList().addAll(likeFoodList);
         total.getDisLikedFoodsList().addAll(disLikedFoodList);

@@ -2,6 +2,7 @@ package com.ktb.submission.controller;
 
 import com.ktb.submission.domain.Submission;
 import com.ktb.submission.dto.PromptResponseDto;
+import com.ktb.submission.dto.request.SubmitRequest;
 import com.ktb.submission.service.SubmissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,14 +32,15 @@ public class SubmissionController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "404", description = "그룹 또는 사용자를 찾을 수 없음")
     })
-    @PostMapping("/user")
+    @PostMapping("/{groupId}/user")
     public ResponseEntity<Void> userSubmit(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "제출 정보", required = true,
                     content = @Content(schema = @Schema(implementation = Submission.class)))
-            @RequestBody Submission submission
+            @RequestBody SubmitRequest submission,
+            @PathVariable Long groupId
     ) {
-        submissionService.userSubmit(submission);
+        submissionService.userSubmit(groupId, submission);
         return ResponseEntity.ok().build();
     }
 
