@@ -13,18 +13,19 @@ import com.ktb.submission.dto.request.AiGenerateRequest;
 import com.ktb.submission.dto.request.RestaurantCandidate;
 import com.ktb.submission.dto.request.SubmitRequest;
 import com.ktb.submission.dto.response.AiGenerateResponse;
-import com.ktb.submission.dto.response.AiRecommendation;
 import com.ktb.submission.exception.AlreadySubmittedUserException;
 import com.ktb.submission.repository.SubmissionRepository;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -33,6 +34,16 @@ import java.util.List;
 public class SubmissionService {
     private final WebClient webClient = WebClient.builder()
             .baseUrl("http://3.236.242.98:8000")
+            .defaultHeader("Accept-Charset", StandardCharsets.UTF_8.name())
+            .exchangeStrategies(ExchangeStrategies.builder()
+                    .codecs(configurer -> {
+                        ObjectMapper mapper = new ObjectMapper();
+                        configurer.defaultCodecs().jackson2JsonEncoder(
+                                new Jackson2JsonEncoder(mapper, MediaType.APPLICATION_JSON));
+                        configurer.defaultCodecs().jackson2JsonDecoder(
+                                new Jackson2JsonDecoder(mapper, MediaType.APPLICATION_JSON));
+                    })
+                    .build())
             .build();
 
     private final SubmissionRepository submissionRepository;
@@ -60,10 +71,15 @@ public class SubmissionService {
     }
 
     public FinalResponseDto totalSubmit(Long groupId){
+        log.info("=== [Service] Starting totalSubmit for groupId: {} ===", groupId);
+
         List<Submission> Submissions =
                 submissionRepository.findAllByGroupId(groupId);
+        log.info("[Service] Found {} submissions for groupId: {}", Submissions.size(), groupId);
 
         Group group = groupRepository.findById(groupId).orElseThrow(NonExistGroupException::new);
+        log.info("[Service] Group details - station: {}, maxCapacity: {}, budget: {}",
+                group.getStation(), group.getMaxCapacity(), group.getBudget());
 
         TotalUserSubmission total = new TotalUserSubmission();
 
@@ -90,8 +106,9 @@ public class SubmissionService {
         }
 
         // Google Places API로 후보 레스토랑 검색
+        log.info("[Service] Calling Google Places API for station: {}", group.getStation());
         List<PlaceSummaryDto> placeSummaries = restaurantSearchService.findRestaurantsByStation(group.getStation());
-        log.info("Found {} restaurant candidates for station: {}", placeSummaries.size(), group.getStation());
+        log.info("[Service] Found {} restaurant candidates for station: {}", placeSummaries.size(), group.getStation());
 
         // PlaceSummaryDto를 Python Restaurant 스키마로 변환
         List<RestaurantCandidate> candidates = placeSummaries.stream()
@@ -109,26 +126,44 @@ public class SubmissionService {
                 400                         // max_new_tokens
         );
 
-        log.info("Sending request to LLM server: {}", request);
+        log.info("=== [Service] Sending request to LLM server ===");
+        log.info("[Service] LLM Request - people: {}, location: {}, budgetPerPerson: {}, candidates count: {}",
+                request.getPeople(), request.getLocation(), request.getBudgetPerPerson(),
+                request.getCandidates() != null ? request.getCandidates().size() : 0);
+        log.debug("[Service] Full LLM request: {}", request);
 
         AiGenerateResponse aiResponse = webClient.post()
                 .uri("/generate")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
+                .contentType(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                .accept(new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8))
+                .acceptCharset(StandardCharsets.UTF_8)
                 .bodyValue(request)
                 .retrieve()
                 .onStatus(
                         status -> status.is4xxClientError() || status.is5xxServerError(),
                         response -> response.bodyToMono(String.class)
-                                .doOnNext(errorBody -> log.error("LLM Server Error Response: {}", errorBody))
+                                .doOnNext(errorBody -> {
+                                    log.error("=== [Service] LLM Server Error ===");
+                                    log.error("[Service] Status Code: {}", response.statusCode());
+                                    log.error("[Service] Error Response Body: {}", errorBody);
+                                })
                                 .map(errorBody -> new RuntimeException("LLM Server Error (" + response.statusCode() + "): " + errorBody))
                 )
                 .bodyToMono(AiGenerateResponse.class)
-                .doOnSuccess(resp -> log.info("LLM response received: {}", resp))
-                .doOnError(error -> log.error("LLM request failed", error))
+                .doOnSuccess(resp -> {
+                    log.info("=== [Service] LLM response received successfully ===");
+                    log.info("[Service] Number of results: {}", resp != null && resp.getResults() != null ? resp.getResults().size() : 0);
+                    log.debug("[Service] Full response: {}", resp);
+                })
+                .doOnError(error -> {
+                    log.error("=== [Service] LLM request failed ===", error);
+                    log.error("[Service] Error type: {}", error.getClass().getName());
+                    log.error("[Service] Error message: {}", error.getMessage());
+                })
                 .block();
 
         AiGenerateResponse aiGenerateResponse = new AiGenerateResponse(aiResponse.getResults());
+        log.info("=== [Service] totalSubmit completed successfully for groupId: {} ===", groupId);
 
         return new FinalResponseDto(aiGenerateResponse, null);
     }
