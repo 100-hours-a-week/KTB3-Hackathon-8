@@ -1,5 +1,6 @@
 import { signIn } from '../../js/api/AuthApi.js';
 import { loadHeader, initializeBackButton } from '../../layout/header-with-back-button/header.js';
+import { setSessionAsLoggedIn } from '../../js/common/sessionManagers.js';
 
 window.addEventListener('DOMContentLoaded', async () => {
     // 헤더 로드
@@ -19,6 +20,7 @@ loginButton.addEventListener('click', async () => {
     try {
         const response = await signIn(userId, password);
         if (response.ok) {
+            setSessionAsLoggedIn();
             window.location.href = '/pages/MainPage/main.html';
         } else if (response.status === 401) {
             // 인증 실패 처리

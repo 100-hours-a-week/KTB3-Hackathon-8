@@ -1,8 +1,18 @@
 import { isInvalidNickname } from '../../js/common/validators.js';
 import { loadHeader } from '../../layout/header/header.js';
-import { getGroupSettings } from '../../js/api/GenerateGroupApi.js';
+import { submitSingle } from '../../js/api/SubmissionAPI.js';
+import { getGroupSettings } from '../../js/api/GroupApi.js';
 import { showToast } from '../../js/common/messages.js';
-import { fetchAPIWithBody } from '../../js/api/api_fetcher.js';
+import { getGroupIdFromSession, getIsLoggedInFromSession } from '../../js/common/sessionManagers.js';
+import { getNickname } from '../../js/api/UserApi.js';
+
+
+
+const isLoggedIn = getIsLoggedInFromSession();
+const nicknameInput = document.getElementById('nickname');
+const helperText = document.querySelector('.nickname-helper-text');
+const submitBtn = document.getElementById('submitBtn');
+
 
 // 전역 변수
 let groupSettings = null;
@@ -42,14 +52,16 @@ async function loadGroupSettings(groupIdParam) {
             if (dateCategory) dateCategory.style.display = 'none';
             if (dateFieldGroup) dateFieldGroup.style.display = 'none';
         }
-        
-        // 2. isOwner에 따른 닉네임 자동 채우기
-        const nicknameInput = document.getElementById('nickname');
-        if (data.isOwner && data.ownerNickname && nicknameInput) {
-            nicknameInput.value = data.ownerNickname;
-            nicknameInput.disabled = true; // 총무는 닉네임 수정 불가
-            updateButtonState();
+
+        if (data.isOwner) {
+            const nickname_response = await getNickname();
+            if (nickname_response.ok) {
+                const data = await nickname_response.json();
+                nicknameInput.value = data.nickname;
+                updateButtonState();
+            }
         }
+
         
         // 날짜 범위 제한 설정 (필요시)
         if (data.hasScheduledDate && data.startDate && data.endDate) {
@@ -82,10 +94,8 @@ async function handleFormSubmit(e) {
     }
     
     const nicknameInput = document.getElementById('nickname');
-    // 성별과 나이 select는 name이 "language"로 되어 있음 (HTML 구조상)
-    const selects = document.querySelectorAll('select[name="language"]');
-    const genderSelect = selects[0]; // 성별 select
-    const ageSelect = selects[1]; // 나이 select
+    const genderSelect = document.getElementById('gender');  
+    const ageSelect = document.getElementById('age');  
     const datesInput = document.getElementById('dates');
     const likeInput = document.getElementById('like');
     const dislikeInput = document.getElementById('dislike');
@@ -123,11 +133,7 @@ async function handleFormSubmit(e) {
     };
     
     try {
-        const response = await fetchAPIWithBody(
-            `/api/v1/submission/${groupId}/user`,
-            'POST',
-            JSON.stringify(submitData)
-        );
+        const response = await submitSingle(groupId, submitData);
         
         if (response.ok) {
             showToast('제출이 완료되었습니다!');
@@ -180,10 +186,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-const nicknameInput = document.getElementById('nickname');
-const helperText = document.querySelector('.nickname-helper-text');
-const submitBtn = document.getElementById('submitBtn');
-
 if (nicknameInput && helperText) {
     nicknameInput.addEventListener('input', () => {
         const nickname = nicknameInput.value;
@@ -197,8 +199,7 @@ if (nicknameInput && helperText) {
 }
 
 function updateButtonState() {
-    if (!submitBtn || !nicknameInput) return;
-    
-    const isFormValid = !isInvalidNickname(nicknameInput.value);
+    const isFormValid =
+        !isInvalidNickname(nicknameInput.value);
     submitBtn.disabled = !isFormValid;
 }

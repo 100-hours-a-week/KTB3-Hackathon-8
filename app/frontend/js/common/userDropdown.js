@@ -1,3 +1,5 @@
+import { signOut } from '../api/auth.js';
+import { setSessionAsLoggedOut } from './sessionManagers.js';   
 /**
  * 로그인 상태 확인 함수
  */
@@ -104,7 +106,7 @@ export function initializeUserDropdown(container = null) {
                         document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
                     });
                     localStorage.clear();
-                    
+                    setSessionAsLoggedOut();
                     // 메인 페이지로 리다이렉트
                     window.location.href = '../../pages/MainPage/main.html';
                 }

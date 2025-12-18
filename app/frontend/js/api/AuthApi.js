@@ -25,3 +25,11 @@ export async function signIn(username, password) {
 export async function signOut() {
     return await fetchAPI(`${API_BASE}/auth/logout`,'POST');
 }
+
+/**
+ * 유저 닉네임 조회
+
+ */
+export async function getNickname() {
+    return await fetchAPI(`${API_BASE}/users/me`,'GET');
+}
