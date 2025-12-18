@@ -1,0 +1,93 @@
+/* ===== 정산 페이지 전용 스코프 ===== */
+.settlement-page {
+  background: #f1f3f5;
+}
+
+/* 카드 */
+.settlement-page .card {
+  background: #ffffff;
+  padding: 20px;
+  margin: 16px auto;
+  border-radius: 16px;
+  max-width: 420px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+/* 업로드 버튼 */
+.settlement-page #uploadBtn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #e63946 0%, #ff6b6b 100%);
+}
+
+/* 미리보기 */
+.settlement-page #receiptPreview {
+  text-align: center;
+  color: #adb5bd;
+  font-size: 14px;
+}
+
+.settlement-page #receiptPreview img {
+  width: 100%;
+  border-radius: 12px;
+}
+
+/* 메뉴 제목 */
+.settlement-page h3 {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+/* 메뉴 리스트 */
+.settlement-page #items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settlement-page #items > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #f1f3f5;
+}
+
+/* 메뉴 버튼 */
+.settlement-page #items button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  color: #212529;
+}
+
+/* 가격 */
+.settlement-page #items span {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* 인원 입력 */
+.settlement-page #totalPeople {
+  width: 64px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid #dee2e6;
+  text-align: right;
+}
+
+/* 정산 금액 */
+.settlement-page #settlementAmount {
+  font-size: 26px;
+  font-weight: 900;
+  color: #e63946;
+}
