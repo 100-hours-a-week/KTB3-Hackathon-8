@@ -86,7 +86,7 @@ jobs:
             # JWT Token Path
             PRIVATE_KEY_PATH="\$PRIVATE_KEY_PATH"
             PUBLIC_KEY_PATH="\$PUBLIC_KEY_PATH"
-            ENVEOF
+          ENVEOF
 
             set -a
             . ./.env
